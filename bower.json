@@ -1,0 +1,15 @@
+{
+  "name": "bouffe-ua2k15",
+  "homepage": "https://github.com/ungdev/bouffe-ua2k15",
+  "authors": [
+    "Gabriel Juchault <gabriel.juchault@gmail.com>",
+    "Xuan-Thi N'Guyen <losteardrop@gmail.com>",
+    "Bastien Jorge <bastien.jorge@gmail.com>"
+  ],
+  "description": "",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "robotodraft": "~1.1.0"
+  }
+}

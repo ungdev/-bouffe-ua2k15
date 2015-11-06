@@ -1,0 +1,147 @@
+html {
+    font-family: 'RobotoDraft', sans-serif;
+    background-color: #2c3e50;
+    color: #fff;
+}
+
+body {
+    margin: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+/* Entry */
+
+.entry, .entry .main, .entry .buttons {
+    height: 100px;
+}
+
+.entry {
+    background-color: #46637f;
+    margin: 5px;
+    padding-right: 10px;
+}
+
+.entry.statusDoing {
+    background-color: rgba(230, 125, 34, .5);
+}
+
+.entry.statusReady {
+    background-color: rgba(46, 204, 113, .5);
+}
+
+/* Title and timer */
+
+.entry .main .title {
+    margin: 0;
+    padding: 10px 0 10px 10px;
+}
+
+.entry .main .timer {
+    font-size: 30px;
+    position: relative;
+    left: 30px;
+}
+
+.entry .main .status {
+    font-size: 22px;
+    left: 200px;
+    margin-top: -20px;
+    position: absolute;
+}
+
+/* Buttons */
+
+.entry .buttons {
+    float: right;
+    position: relative;
+    top: -100px;
+}
+
+.entry .buttons button {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    height: 80px;
+    margin-top: 10px;
+    position: relative;
+    top: 0;
+    width: 120px;
+}
+
+.entry .buttons button[disabled] {
+    cursor: default;
+}
+
+.entry .buttons button[disabled]:after {
+    content: ' ';
+    position: absolute;
+    width: 120px;
+    height: 80px;
+    margin-top: -38px;
+    margin-left: -60px;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.entry .buttons button:active, .entry .buttons button:focus {
+    outline: 0;
+}
+
+.entry .buttons button:active {
+    border-bottom: 5px solid transparent !important;
+    height: 75px;
+}
+
+.entry .buttons button:active img {
+    margin-top: -28px;
+}
+
+.entry .buttons button.statusCook {
+    background-color: #e67e22;
+    border-bottom: 5px solid #d35400;
+}
+
+.entry .buttons button.statusReady {
+    background-color: #1abc9c;
+    border-bottom: 5px solid #16a085;
+}
+
+.entry .buttons button.statusDone {
+    background-color: #2ecc71;
+    border-bottom: 5px solid #27ae60;
+}
+
+.entry .buttons button.statusCook[disabled] {
+    background-color: #e67e22;
+    border-bottom: 5px solid #e67e22;
+}
+
+.entry .buttons button.statusReady[disabled] {
+    background-color: #1abc9c;
+    border-bottom: 5px solid #1abc9c;
+}
+
+.entry .buttons button.statusDone[disabled] {
+    background-color: #2ecc71;
+    border-bottom: 5px solid #2ecc71;
+}
+
+.entry .buttons button img {
+    margin-left: -15px;
+    margin-top: -30px;
+    position: absolute;
+}
+
+.entry .buttons button span {
+    display: inline-block;
+    font-size: 19px;
+    margin-left: -50px;
+    position: absolute;
+    top: 48px;
+    width: 100px;
+}
