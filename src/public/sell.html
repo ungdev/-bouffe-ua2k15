@@ -5,11 +5,30 @@
         <title>Bouffe UA 2k15</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="../bower_components/robotodraft/robotodraft.css">
+        <link rel="stylesheet" href="/bower_components/robotodraft/robotodraft.css">
         <link rel="stylesheet" href="/css/cook.css">
+        <link rel="stylesheet" href="/css/sell.css">
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io(window.location.origin + '/sellers');
+
+        </script>
     </head>
     <body>
-        <ul>
+        <div class="items">
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+            <div class="item">Blabla</div>
+        </div>
+        <button class="buy">Payer (total : <span class="color">2.0 €</span>)</button>
+        <ul class="list">
             <li class="entry statusNone">
                 <div class="main">
                     <h1 class="title">Pizza</h1>

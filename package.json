@@ -3,19 +3,24 @@
   "version": "1.0.0",
   "description": "UTT Arena Food Manager",
   "repository": "ttps://github.com/ungdev/bouffe-ua2k15",
-  "main": "app.js",
+  "main": "./src/app.js",
+  "scripts": {
+    "start": "node ./src/app.js"
+  },
   "authors": [
     "Gabriel Juchault <gabriel.juchault@gmail.com>",
     "Xuan-Thi Nguyen <xthi.ngu@gmail.com>",
-    "Bastien Jorge <bastien.jorge@gmail.com>"
+    "Bastien Jorge <bastien.jorge@gmail.com>",
+    "Axel Mousset <pymzorr@gmail.com>"
   ],
   "license": "MIT",
   "dependencies": {
-    "socket.io": "latest",
-    "express": "latest",
-    "ejs": "latest",
-    "rethinkdb": "latest",
+    "bluebird": "^3.0.6",
     "body-parser": "latest",
-    "async": "latest"
+    "ejs": "latest",
+    "express": "latest",
+    "mongodb": "^2.0.49",
+    "mongoose": "^4.2.8",
+    "socket.io": "latest"
   }
 }
