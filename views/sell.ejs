@@ -5,12 +5,20 @@
         <title>Bouffe UA 2k15</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="bower_components/robotodraft/robotodraft.css">
-        <link rel="stylesheet" href="css/cooks.css">
-        <link rel="stylesheet" href="css/sell.css">
+        <link rel="stylesheet" href="/robotodraft/robotodraft.css">
+        <link rel="stylesheet" href="/css/cook.css">
+        <link rel="stylesheet" href="/css/sell.css">
     </head>
     <body>
         <div class="items">
+<!--         <% for(var i = 0; i < result.length; i++) {%>
+           <div class="item"><%= result[i] %></div>
+        <% } %> -->
+
+         <% result.forEach(function(drink) { %>
+            <div class="item"><%= drink.name %> - <%= drink.price %></div>
+        <% }); %>
+
             <div class="item">Blabla</div>
             <div class="item">Blabla</div>
             <div class="item">Blabla</div>

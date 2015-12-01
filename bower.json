@@ -3,9 +3,10 @@
   "homepage": "https://github.com/ungdev/bouffe-ua2k15",
   "authors": [
     "Gabriel Juchault <gabriel.juchault@gmail.com>",
-    "Xuan-Thi N'Guyen <losteardrop@gmail.com>",
+    "Xuan-Thi Nguyen <xthi.ngu@gmail.com>",
     "Bastien Jorge <bastien.jorge@gmail.com>"
   ],
+  "main": "app.js",
   "description": "",
   "license": "MIT",
   "private": true,

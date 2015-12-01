@@ -1,0 +1,21 @@
+{
+  "name": "bouffe-ua2k15",
+  "version": "1.0.0",
+  "description": "UTT Arena Food Manager",
+  "repository": "ttps://github.com/ungdev/bouffe-ua2k15",
+  "main": "app.js",
+  "authors": [
+    "Gabriel Juchault <gabriel.juchault@gmail.com>",
+    "Xuan-Thi Nguyen <xthi.ngu@gmail.com>",
+    "Bastien Jorge <bastien.jorge@gmail.com>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "socket.io": "latest",
+    "express": "latest",
+    "ejs": "latest",
+    "rethinkdb": "latest",
+    "body-parser": "latest",
+    "async": "latest"
+  }
+}
