@@ -8,10 +8,25 @@
         <link rel="stylesheet" href="/bower_components/robotodraft/robotodraft.css">
         <link rel="stylesheet" href="/css/cook.css">
         <link rel="stylesheet" href="/css/sell.css">
+        <script src="/bower_components/jquery/dist/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-            var socket = io(window.location.origin + '/sellers');
+            $(function() {
+                var socket = io(window.location.origin + '/sellers');
 
+                $('#send')
+                    .on('click', function() {
+                        // TODO: reset ordered item list
+                        var command = {
+                            itemList: [ 'pizza', '3xCroq'],
+                            totalPrice: 700
+                        };
+
+                        socket.emit('newCommand', command);
+                        console.log('[DEBUG] Command sent: ');
+                        console.log(command)
+                    });
+            });
         </script>
     </head>
     <body>
@@ -27,7 +42,7 @@
             <div class="item">Blabla</div>
             <div class="item">Blabla</div>
         </div>
-        <button class="buy">Payer (total : <span class="color">2.0 €</span>)</button>
+        <button id="send" class="buy">Payer (total : <span class="color">2.0 €</span>)</button>
         <ul class="list">
             <li class="entry statusNone">
                 <div class="main">

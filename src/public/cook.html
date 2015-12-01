@@ -7,14 +7,25 @@
 
         <link rel="stylesheet" href="/bower_components/robotodraft/robotodraft.css">
         <link rel="stylesheet" href="/css/cook.css">
+        <script src="/bower_components/jquery/dist/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
         <script>
-            var socket = io(window.location.origin + '/cookers');
+            $(function() {
+                var socket = io(window.location.origin + '/cookers');
 
+                socket.on('newCommand', function(purchases) {
+                    console.log('[DEBUG] Purchases received: ');
+                    console.log(purchases);
+
+                    purchases.forEach(function(purchases) {
+                        // TODO: Display purchase
+                    });
+                });
+            });
         </script>
     </head>
     <body>
-        <ul>
+        <ul id="commands">
             <li class="entry statusNone">
                 <div class="main">
                     <h1 class="title">Pizza</h1>

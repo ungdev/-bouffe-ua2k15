@@ -7,7 +7,9 @@ var bodyParser = require('body-parser');
 var mongoose   = Promise.promisifyAll(require('mongoose'));
 var config     = require(__dirname + '/../config');
 var models     = require(__dirname + '/models');
-
+var Item       = Promise.promisifyAll(models.Item);
+var Purchase   = Promise.promisify(models.Purchase);
+var seed       = require(__dirname + '/seed');
 
 /**
  * Express setup
@@ -22,12 +24,30 @@ app.use('/bower_components', express.static(__dirname + '/../bower_components'))
 var cookers = io.of('/cookers');
 var sellers = io.of('/sellers');
 
-cookers.on('connection', function() {
+cookers.on('connection', function(socket) {
     console.log('[DEBUG] Cooker connected');
+
+    // TODO: send pending purchases
+    socket.on('commandDone', function(command) {
+        console.log('[DEBUG] Command done: ');
+        console.log(command);
+    })
 });
 
-sellers.on('connection', function() {
+sellers.on('connection', function(socket) {
     console.log('[DEBUG] Seller connected');
+    // TODO: send item list
+
+    socket.on('newCommand', function(command) {
+        console.log('[DEBUG] Command received');
+        console.log(command);
+
+        command.itemList.forEach(function(item) {
+            console.log(item);
+        });
+
+        cookers.emit('newCommand', command);
+    });
 });
 
 
@@ -38,6 +58,16 @@ mongoose
     .connectAsync('mongodb://localhost/myappdatabase')
     .then(function() {
         console.log('[OK] Connected to mongodb');
+
+        return Item.findAsync();
+    })
+    .then(function(items) {
+        // Seed if empty database
+        if (items.length === 0) {
+            return seed();
+        }
+    })
+    .then(function() {
         return server.listenAsync(config.express.port);
     })
     .then(function() {
