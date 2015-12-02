@@ -27,7 +27,20 @@ var sellers = io.of('/sellers');
 cookers.on('connection', function(socket) {
     console.log('[DEBUG] Cooker connected');
 
-    // TODO: send pending purchases
+    // Send pending and in progress purchases
+    Purchase
+        .find()
+        .where('state').in(['pending', 'inProgress'])
+        .execAsync()
+        .then(function(purchases) {
+            if (purchases.length !== 0) {
+                socket.emit('purchaseList', purchases);
+            }
+        })
+        .catch(function(err) {
+            console.log(new Error(err));
+        });
+
     socket.on('commandDone', function(command) {
         console.log('[DEBUG] Command done: ');
         console.log(command);
@@ -53,7 +66,7 @@ sellers.on('connection', function(socket) {
             purchases.push({
                 _item: item._id,
                 price: item.price,
-                state: 'Pending'
+                state: 'pending'
             });
         });
 
@@ -63,7 +76,7 @@ sellers.on('connection', function(socket) {
             .then(function(purchases) {
                 console.log('[DEBUG] Purchases created');
                 console.log(purchases);
-                
+
                 // Send command to cookers
                 cookers.emit('newCommand', purchases);
             })

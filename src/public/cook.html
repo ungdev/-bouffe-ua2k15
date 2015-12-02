@@ -11,7 +11,16 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             $(function() {
-                var socket = io(window.location.origin + '/cookers');
+                var socket       = io(window.location.origin + '/cookers');
+                var purchaseList = [];
+
+                socket.on('purchaseList', function(_purchaseList) {
+                    console.log('[DEBUG] Received purchase list');
+                    console.log(_purchaseList);
+
+                    purchaseList = _purchaseList;
+                    // TODO: Display purchase list
+                });
 
                 socket.on('newCommand', function(purchases) {
                     console.log('[DEBUG] Purchases received: ');
