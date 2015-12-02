@@ -12,15 +12,29 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             $(function() {
-                var socket = io(window.location.origin + '/sellers');
+                var socket   = io(window.location.origin + '/sellers');
+                var itemList = [];
+
+                socket.on('itemList', function(_itemList) {
+                    console.log('[DEBUG] Received item list');
+                    console.log(_itemList);
+                    itemList = _itemList;
+                });
 
                 $('#send')
                     .on('click', function() {
                         // TODO: reset ordered item list
-                        var command = {
-                            itemList: [ 'pizza', '3xCroq'],
-                            totalPrice: 700
-                        };
+
+                        var command = [
+                            {
+                                _id: itemList[0]._id,
+                                price: itemList[0].normalPrice
+                            },
+                            {
+                                _id: itemList[1]._id,
+                                price: itemList[1].reducedPrice
+                            }
+                        ];
 
                         socket.emit('newCommand', command);
                         console.log('[DEBUG] Command sent: ');

@@ -22,7 +22,7 @@ function seed() {
     return Item
         .createAsync(items)
         .then(function() {
-            console.log('Database seeded');
+            console.log('[OK} Database seeded');
         })
         .catch(function(err) {
             throw new Error(err);

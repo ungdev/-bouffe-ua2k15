@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var purchaseSchema = new Schema({
-    _item: { type: Number, ref: 'Item' },
+    _item: { type: String, ref: 'Item' },
+    price: Number,
     state: String
 });
 

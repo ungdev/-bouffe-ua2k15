@@ -8,7 +8,7 @@ var mongoose   = Promise.promisifyAll(require('mongoose'));
 var config     = require(__dirname + '/../config');
 var models     = require(__dirname + '/models');
 var Item       = Promise.promisifyAll(models.Item);
-var Purchase   = Promise.promisify(models.Purchase);
+var Purchase   = Promise.promisifyAll(models.Purchase);
 var seed       = require(__dirname + '/seed');
 
 /**
@@ -36,17 +36,40 @@ cookers.on('connection', function(socket) {
 
 sellers.on('connection', function(socket) {
     console.log('[DEBUG] Seller connected');
-    // TODO: send item list
+
+    // Send item list
+    Item
+        .findAsync()
+        .then(function(items) {
+            sellers.emit('itemList', items);
+        });
 
     socket.on('newCommand', function(command) {
         console.log('[DEBUG] Command received');
         console.log(command);
 
-        command.itemList.forEach(function(item) {
-            console.log(item);
+        var purchases = [];
+        command.forEach(function(item) {
+            purchases.push({
+                _item: item._id,
+                price: item.price,
+                state: 'Pending'
+            });
         });
 
-        cookers.emit('newCommand', command);
+        // Create new purchases
+        Purchase
+            .createAsync(purchases)
+            .then(function(purchases) {
+                console.log('[DEBUG] Purchases created');
+                console.log(purchases);
+                
+                // Send command to cookers
+                cookers.emit('newCommand', purchases);
+            })
+            .catch(function(err) {
+                console.log(new Error(err));
+            });
     });
 });
 
@@ -74,6 +97,5 @@ mongoose
         console.log('[OK] Server listening on 0.0.0.0:' + config.express.port);
     })
     .catch(function(err) {
-        console.log(err);
         throw new Error(err);
     });
