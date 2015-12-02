@@ -21,25 +21,24 @@
                     itemList = _itemList;
                 });
 
-                $('#send')
-                    .on('click', function() {
-                        // TODO: reset ordered item list
+                $('#send').on('click', function() {
+                    // TODO: reset ordered item list
 
-                        var command = [
-                            {
-                                _id: itemList[0]._id,
-                                price: itemList[0].normalPrice
-                            },
-                            {
-                                _id: itemList[1]._id,
-                                price: itemList[1].reducedPrice
-                            }
-                        ];
+                    var command = [
+                        {
+                            _id: itemList[0]._id,
+                            price: itemList[0].normalPrice
+                        },
+                        {
+                            _id: itemList[1]._id,
+                            price: itemList[1].reducedPrice
+                        }
+                    ];
 
-                        socket.emit('newCommand', command);
-                        console.log('[DEBUG] Command sent: ');
-                        console.log(command)
-                    });
+                    socket.emit('newCommand', command);
+                    console.log('[DEBUG] Command sent: ');
+                    console.log(command)
+                });
             });
         </script>
     </head>

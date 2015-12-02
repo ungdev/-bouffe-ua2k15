@@ -34,6 +34,8 @@ cookers.on('connection', function(socket) {
         .execAsync()
         .then(function(purchases) {
             if (purchases.length !== 0) {
+                console.log('[DEBUG] Send purchase list');
+
                 socket.emit('purchaseList', purchases);
             }
         })
@@ -41,10 +43,20 @@ cookers.on('connection', function(socket) {
             console.log(new Error(err));
         });
 
-    socket.on('commandDone', function(command) {
-        console.log('[DEBUG] Command done: ');
-        console.log(command);
-    })
+    socket.on('updatePurchase', function(data) {
+        console.log('[DEBUG] New purchase state: ' + data.state);
+        console.log(data.purchase);
+
+        Purchase
+            .findByIdAndUpdateAsync(data.purchase._id, { state: 'inProgress' })
+            .then(function(purchase) {
+                console.log('[DEBUG] Purchase updated');
+                console.log(purchase);
+            })
+            .catch(function(err) {
+                console.log(new Error(err));
+            })
+    });
 });
 
 sellers.on('connection', function(socket) {
@@ -54,6 +66,8 @@ sellers.on('connection', function(socket) {
     Item
         .findAsync()
         .then(function(items) {
+            console.log('[DEBUG] Send item list');
+
             sellers.emit('itemList', items);
         });
 

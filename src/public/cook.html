@@ -30,6 +30,16 @@
                         // TODO: Display purchase
                     });
                 });
+
+                $('.buttons').on('click', function(e) {
+                    // TODO: change display
+
+                    console.log('[DEBUG] updatePurchase');
+                    socket.emit('updatePurchase', {
+                        purchase: purchaseList[0],
+                        state: 'inProgress'
+                    });
+                });
             });
         </script>
     </head>
