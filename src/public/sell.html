@@ -6,23 +6,70 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="stylesheet" href="/bower_components/robotodraft/robotodraft.css">
+        <link rel="stylesheet" href="/css/index.css">
         <link rel="stylesheet" href="/css/cook.css">
         <link rel="stylesheet" href="/css/sell.css">
+        <link rel="stylesheet" href="/css/tabs.css">
+        <link rel="stylesheet" href="/css/tabstyles.css">
+
         <script src="/bower_components/jquery/dist/jquery.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="/js/modernizr.custom.js"></script>
+        <script src="/js/cbpFWTabs.js"></script>
         <script>
             $(function() {
+
+                [].slice.call( document.querySelectorAll('.tabs')).forEach(function(el) {
+                    new CBPFWTabs(el);
+                });
+
                 var socket   = io(window.location.origin + '/sellers');
                 var itemList = [];
+                var item;
 
                 socket.on('itemList', function(_itemList) {
                     console.log('[DEBUG] Received item list');
                     console.log(_itemList);
                     itemList = _itemList;
+
+                    $.each(itemList, function(index, value) {
+                        item = '<div class="item"><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice/100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice/100).toFixed(2)  + ' €</div></div>';
+                        if (value.type == "drinks") {
+                            $('#section-bar-1').append(item);
+                        }
+                        else if (value.type == "bars") {
+                            $('#section-bar-2').append(item);
+                        }
+                        else if (value.type == "crepes") {
+                            $('#section-bar-3').append(item);
+                        }
+                        else if (value.type == "croques") {
+                            $('#section-bar-4 > #croques').append(item);
+                        }
+                        else if (value.type == "sandwiches") {
+                            $('#section-bar-4 > #sandwiches').append(item);
+                        }
+                        else if (value.type == "pizzas") {
+                            $('#section-bar-5').append(item);
+                        }
+                        else if (value.type == "formules") {
+                            $('#section-bar-6').append(item);
+                        }
+                    });
+
+                    $.each($(".item"), function() {
+                        $(this).on("click", function() {
+                            $(".command > ul").append('<li>' + $(this).find(".name").text() + '<span class="close"> X</span></li>') 
+                        });
+                    });
                 });
+
 
                 $('#send').on('click', function() {
                     // TODO: reset ordered item list
+                    $.each($(".command > ul > li"), function() {
+                        
+                    });
 
                     var command = [
                         {
@@ -39,22 +86,57 @@
                     console.log('[DEBUG] Command sent: ');
                     console.log(command)
                 });
+
+                $('button.switch').on('click', function() {
+                    
+                    if ($(this).attr('mode') == "normal") {
+                        $(this).attr('mode', 'reduced');
+                        $(this).text("Passer en tarif normal");
+                        $('.command > h3').text("Vous êtes en mode : réduit");
+                    } else {
+                        $(this).attr('mode', 'normal');
+                        $(this).text("Passer en tarif réduit");
+                        $('.command > h3').text("Vous êtes en mode : normal");
+                    }
+                });
             });
         </script>
     </head>
     <body>
-        <div class="items">
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
-            <div class="item">Blabla</div>
+        <div class="command">
+            <h1 class="title">Commande</h1>
+            <h3>Vous êtes en mode : normal</h3>
+            <button class="btn btn-2 btn-2a switch" mode="normal">Passer en tarif réduit</button>
+
+            <ul>
+            </ul>
         </div>
+        <section id="tab">
+            <div class="tabs tabs-style-bar">
+                <nav>
+                    <ul>
+                        <li><a href="#section-bar-1" class="icon icon-coffee"><span>Boissons</span></a></li>
+                        <li><a href="#section-bar-2"><span>Barres</span></a></li>
+                        <li><a href="#section-bar-3"><span>Crêpes</span></a></li>
+                        <li><a href="#section-bar-4"><span>Croques et sandwichs</span></a></li>
+                        <li><a href="#section-bar-5"><span>Pizzas</span></a></li>
+                        <li><a href="#section-bar-6"><span>Formules</span></a></li>
+
+                    </ul>
+                </nav>
+                <div class="content-wrap">
+                    <section id="section-bar-1"></section>
+                    <section id="section-bar-2"></section>
+                    <section id="section-bar-3"></section>
+                    <section id="section-bar-4">
+                        <div id="croques"></div>
+                        <div id="sandwiches"></div>
+                    </section>
+                    <section id="section-bar-5"></section>
+                    <section id="section-bar-6"></section>
+                </div>
+            </div>
+        </section>
         <button id="send" class="buy">Payer (total : <span class="color">2.0 €</span>)</button>
         <ul class="list">
             <li class="entry statusNone">
