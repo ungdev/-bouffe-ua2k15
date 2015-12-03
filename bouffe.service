@@ -1,8 +1,15 @@
+[Unit]
+Description=bouffe
+After=network.service
+Requires=nginx.service
+
 [Service]
-WorkingDirectory=/srv/bouffe-ua2k15
-ExecStart=/usr/bin/node ./src/app.js
+WorkingDirectory=/var/www/bouffe-ua2k15
+ExecStart=/usr/bin/npm start
 Restart=always
 Environment='NODE_ENV=production'
+User=www-data
+Group=www-data
 
 [Install]
 WantedBy=multi-user.target
