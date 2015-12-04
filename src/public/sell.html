@@ -1,185 +1,209 @@
 <!DOCTYPE html>
 <html lang="fr-FR">
-    <head>
-        <meta charset="utf-8">
-        <title>Bouffe UA 2k15</title>
-        <meta content="width=device-width, initial-scale=1" name="viewport">
 
-        <link href="/bower_components/robotodraft/robotodraft.css" rel="stylesheet">
-        <link href="/css/index.css" rel="stylesheet">
-        <link href="/css/cook.css" rel="stylesheet">
-        <link href="/css/sell.css" rel="stylesheet">
-        <link href="/css/tabs.css" rel="stylesheet">
-        <link href="/css/tabstyles.css" rel="stylesheet">
+<head>
+    <meta charset="utf-8">
+    <title>Bouffe UA 2k15</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
 
-        <script src="/bower_components/jquery/dist/jquery.js"></script>
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="/js/modernizr.custom.js"></script>
-        <script src="/js/cbpFWTabs.js"></script>
-        <script>
-            $(function() {
+    <link href="/bower_components/robotodraft/robotodraft.css" rel="stylesheet">
+    <link href="/css/index.css" rel="stylesheet">
+    <link href="/css/cook.css" rel="stylesheet">
+    <link href="/css/sell.css" rel="stylesheet">
+    <link href="/css/tabs.css" rel="stylesheet">
+    <link href="/css/tabstyles.css" rel="stylesheet">
 
-                [].slice.call(document.querySelectorAll('.tabs')).forEach(function(e) {
-                    new CBPFWTabs(e);
-                });
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/modernizr.custom.js"></script>
+    <script src="/js/cbpFWTabs.js"></script>
+    <script>
+        $(function() {
 
-                function recalculate(send) {
+            [].slice.call(document.querySelectorAll('.tabs')).forEach(function(e) {
+                new CBPFWTabs(e);
+            });
 
-                    var commands = [];
+            function recalculate(send) {
 
-                    $.each($(".command > ul > li"), function() {
-                        if ($('button.switch').attr('mode') == "normal") {
-                            commands.push({
-                                _id: itemList[$(this).attr("id")]._id,
-                                price: itemList[$(this).attr("id")].normalPrice,
-                                name: itemList[$(this).attr("id")].name
-                            });} else {commands.push({
-                                _id: itemList[$(this).attr("id")]._id,
-                                price: itemList[$(this).attr("id")].reducedPrice,
-                                name: itemList[$(this).attr("id")].name
-                            });}
-                        if (send)
-                            $("#commands").append('<li class="entry statusNone" id=' + itemList[$(this).attr("id")]._id + '><div class="main"><h1 class="title">' + itemList[$(this).attr("id")].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
-                    });
+                var commands = [];
 
-                    return commands;
-                }
-
-                function refreshTotalPrice() {
-                    $('#total-price').html(recalculate().reduce(function (a, b) {
-                        return a + b.price;
-                    }, 0) / 100);
-                }
-
-                var socket = io(window.location.origin + '/sellers');
-                var itemList = [];
-                var item;
-
-                socket.on('itemList', function(_itemList) {
-                    $.each($(".content-wrap > section"), function() {
-                        $(this).empty();
-                    });
-
-                    console.log('[DEBUG] Received item list');
-                    console.log(_itemList);
-                    itemList = _itemList;
-
-                    $.each(itemList, function(index, value) {
-                        item = '<div class="item" id=' + index + '><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice / 100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice / 100).toFixed(2) + ' €</div></div>';
-                        if (value.type == "drinks") {$('#section-bar-1').append(item);} else if (value.type == "bars") {$('#section-bar-2').append(item);} else if (value.type == "crepes") {$('#section-bar-3').append(item);} else if (value.type == "croques") {$('#section-bar-4 > #croques').append(item);} else if (value.type == "sandwiches") {$('#section-bar-4 > #sandwiches').append(item);} else if (value.type == "pizzas") {$('#section-bar-5').append(item);} else if (value.type == "formules") {$('#section-bar-6').append(item);}
-                    });
-
-                    $.each($(".item"), function() {
-                        $(this).on("click", function() {
-                            $(".command > ul").append('<li id=' + $(this).attr("id") + '>' + $(this).find(".name").text() + '<span class="remove-item"> X</span></li>');
-                            refreshTotalPrice();
+                $.each($(".command > ul > li"), function() {
+                    if ($('button.switch').attr('mode') == "normal") {
+                        commands.push({
+                            _id: itemList[$(this).attr("id")]._id,
+                            price: itemList[$(this).attr("id")].normalPrice,
+                            name: itemList[$(this).attr("id")].name
                         });
-                    });
-                });
-
-                socket.on('updatedPurchase', function(purchase) {
-                    console.log('[DEBUG] Purchase received: ');
-                    console.log(purchase);
-                    // UPDATE DIV PURCHASE
-                });
-
-                $('#send').on('click', function() {
-
-                    var commands = recalculate(true);
-
-                    socket.emit('newCommand', commands);
-                    console.log('[DEBUG] Command sent: ');
-                    console.log(commands)
-                    $(".command > ul").empty();
-
-                });
-
-                $('button.switch').on('click', function() {
-
-                    if ($(this).attr('mode') == "normal") {
-                        $(this).attr('mode', 'reduced');
-                        $(this).text("Passer en tarif normal");
-                        $('.command > h3').text("Vous êtes en mode : réduit");
                     } else {
-                        $(this).attr('mode', 'normal');
-                        $(this).text("Passer en tarif réduit");
-                        $('.command > h3').text("Vous êtes en mode : normal");
+                        commands.push({
+                            _id: itemList[$(this).attr("id")]._id,
+                            price: itemList[$(this).attr("id")].reducedPrice,
+                            name: itemList[$(this).attr("id")].name
+                        });
                     }
-
-                    refreshTotalPrice();
+                    if (send)
+                        $("#commands").append('<li class="entry statusNone" id=' + itemList[$(this).attr("id")]._id + '><div class="main"><h1 class="title">' + itemList[$(this).attr("id")].name +
+                            '</h1><div class="group"><span class="timer">' + "Time" +
+                            '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
+                        );
                 });
 
-                $('.command > ul').on('click', 'span.remove-item', function() {
-                    $(this).fadeOut(function() {
-                        $(this).parent().remove();
+                return commands;
+            }
+
+            function refreshTotalPrice() {
+                $('#total-price').html(recalculate().reduce(function(a, b) {
+                    return a + b.price;
+                }, 0) / 100);
+            }
+
+            var socket = io(window.location.origin + '/sellers');
+            var itemList = [];
+            var item;
+
+            socket.on('itemList', function(_itemList) {
+                $.each($(".content-wrap > section"), function() {
+                    $(this).empty();
+                });
+
+                console.log('[DEBUG] Received item list');
+                console.log(_itemList);
+                itemList = _itemList;
+
+                $.each(itemList, function(index, value) {
+                    item = '<div class="item" id=' + index + '><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice / 100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice /
+                        100).toFixed(2) + ' €</div></div>';
+                    if (value.type == "drinks") {
+                        $('#section-bar-1').append(item);
+                    } else if (value.type == "bars") {
+                        $('#section-bar-2').append(item);
+                    } else if (value.type == "crepes") {
+                        $('#section-bar-3').append(item);
+                    } else if (value.type == "croques") {
+                        $('#section-bar-4 > #croques').append(item);
+                    } else if (value.type == "sandwiches") {
+                        $('#section-bar-4 > #sandwiches').append(item);
+                    } else if (value.type == "pizzas") {
+                        $('#section-bar-5').append(item);
+                    } else if (value.type == "formules") {
+                        $('#section-bar-6').append(item);
+                    }
+                });
+
+                $.each($(".item"), function() {
+                    $(this).on("click", function() {
+                        $(".command > ul").append('<li id=' + $(this).attr("id") + '>' + $(this).find(".name").text() + '<span class="remove-item"> X</span></li>');
                         refreshTotalPrice();
                     });
                 });
             });
-        </script>
-    </head>
-    <body>
-        <div class="command">
-            <h1 class="title">Commande</h1>
-            <h3>Vous êtes en mode <b>normal</b></h3>
-            <button class="btn btn-2 btn-2a switch" mode="normal">Passer en tarif réduit</button>
 
-            <ul></ul>
-        </div>
-        <section id="tab">
-            <div class="tabs tabs-style-bar">
-                <nav>
-                    <ul>
-                        <li>
-                            <a class="icon icon-coffee" href="#section-bar-1">
-                                <span>Boissons</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#section-bar-2">
-                                <span>Barres</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#section-bar-3">
-                                <span>Crêpes</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#section-bar-4">
-                                <span>Croques et sandwichs</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#section-bar-5">
-                                <span>Pizzas</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#section-bar-6">
-                                <span>Formules</span>
-                            </a>
-                        </li>
+            socket.on('updatedPurchase', function(purchase) {
+                console.log('[DEBUG] Purchase received: ');
+                console.log(purchase);
+                // UPDATE DIV PURCHASE
+            });
 
-                    </ul>
-                </nav>
-                <div class="content-wrap">
-                    <section id="section-bar-1"></section>
-                    <section id="section-bar-2"></section>
-                    <section id="section-bar-3"></section>
-                    <section id="section-bar-4">
-                        <div id="croques"></div>
-                        <div id="sandwiches"></div>
-                    </section>
-                    <section id="section-bar-5"></section>
-                    <section id="section-bar-6"></section>
-                </div>
+            $('#send').on('click', function() {
+
+                var commands = recalculate(true);
+
+                socket.emit('newCommand', commands);
+                console.log('[DEBUG] Command sent: ');
+                console.log(commands)
+                $(".command > ul").empty();
+
+            });
+
+            $('button.switch').on('click', function() {
+
+                if ($(this).attr('mode') == "normal") {
+                    $(this).attr('mode', 'reduced');
+                    $(this).text("Passer en tarif normal");
+                    $('.command > h3').text("Vous êtes en mode : réduit");
+                } else {
+                    $(this).attr('mode', 'normal');
+                    $(this).text("Passer en tarif réduit");
+                    $('.command > h3').text("Vous êtes en mode : normal");
+                }
+
+                refreshTotalPrice();
+            });
+
+            $('.command > ul').on('click', 'span.remove-item', function() {
+                $(this).fadeOut(function() {
+                    $(this).parent().remove();
+                    refreshTotalPrice();
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="command">
+        <h1 class="title">Commande</h1>
+        <h3>Vous êtes en mode <b>normal</b></h3>
+        <button class="btn btn-2 btn-2a switch" mode="normal">Passer en tarif réduit</button>
+
+        <ul></ul>
+    </div>
+    <section id="tab">
+        <div class="tabs tabs-style-bar">
+            <nav>
+                <ul>
+                    <li>
+                        <a class="icon icon-coffee" href="#section-bar-1">
+                            <span>Boissons</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#section-bar-2">
+                            <span>Barres</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#section-bar-3">
+                            <span>Crêpes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#section-bar-4">
+                            <span>Croques et sandwichs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#section-bar-5">
+                            <span>Pizzas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#section-bar-6">
+                            <span>Formules</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+            <div class="content-wrap">
+                <section id="section-bar-1"></section>
+                <section id="section-bar-2"></section>
+                <section id="section-bar-3"></section>
+                <section id="section-bar-4">
+                    <div id="croques"></div>
+                    <div id="sandwiches"></div>
+                </section>
+                <section id="section-bar-5"></section>
+                <section id="section-bar-6"></section>
             </div>
-        </section>
-        <button class="buy" id="send">Payer (total :
-            <span class="color" id="total-price">0</span>
-            €)</button>
-        <ul class="list" id="commands">
-        </ul>
-    </body>
+        </div>
+    </section>
+    <button class="buy" id="send">Payer (total :
+        <span class="color" id="total-price">0</span>
+        €)</button>
+    <ul class="list" id="commands">
+    </ul>
+</body>
+
 </html>
