@@ -103,6 +103,34 @@ var items = [
         sendToCook: false
     },
     {
+        name: 'Kit Kat',
+        type: 'bars',
+        normalPrice: 100,
+        reducedPrice: 100,
+        sendToCook: false
+    },
+    {
+        name: 'Snickers',
+        type: 'bars',
+        normalPrice: 100,
+        reducedPrice: 100,
+        sendToCook: false
+    },
+    {
+        name: 'Twix',
+        type: 'bars',
+        normalPrice: 100,
+        reducedPrice: 100,
+        sendToCook: false
+    },
+    {
+        name: 'Lyon',
+        type: 'bars',
+        normalPrice: 100,
+        reducedPrice: 100,
+        sendToCook: false
+    },
+    {
         name: 'Crêpe Jambon Fromage',
         type: 'crepes',
         normalPrice: 200,
@@ -313,21 +341,7 @@ var items = [
         sendToCook: false
     },
     {
-        name: 'Crêpe sucrée + Café (jusqu\'à 10h30)',
-        type: 'formules',
-        normalPrice: 100,
-        reducedPrice: 100,
-        sendToCook: true
-    },
-    {
-        name: 'Crêpe sucrée + Thé (jusqu\'à 10h30)',
-        type: 'formules',
-        normalPrice: 100,
-        reducedPrice: 100,
-        sendToCook: true
-    },
-    {
-        name: 'Crêpe sucrée + Chocolat (jusqu\'à 10h30)',
+        name: 'Crêpe sucrée + Boisson Chaude (jusqu\'à 10h30)',
         type: 'formules',
         normalPrice: 100,
         reducedPrice: 100,

@@ -12,25 +12,77 @@
     <link href="/css/sell.css" rel="stylesheet">
     <link href="/css/tabs.css" rel="stylesheet">
     <link href="/css/tabstyles.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/bower_components/ModalWindowEffects/css/component.css" />
 
     <script src="/bower_components/jquery/dist/jquery.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/modernizr.custom.js"></script>
+    <script src="/bower_components/ModalWindowEffects/js/modernizr.custom.js"></script>
     <script src="/js/cbpFWTabs.js"></script>
     <script>
-        $(function() {
+        $(function() {            
+            var socket = io(window.location.origin + '/sellers');
+            var itemList = [];
+            var purchaseList = [];
+            var item;
+            var formules = [];
+            var itemFormule;
+
+            function init() {
+                var overlay = document.querySelector( '.md-overlay' );
+
+                [].slice.call( document.querySelectorAll( '.md-trigger' ) ).forEach( function( el, i ) {
+                    var modal = document.querySelector( '#' + el.getAttribute( 'data-modal' ) );
+                    var closes = $(modal).find('.btn-2a');
+
+                    function removeModal( hasPerspective ) {
+                        classie.remove( modal, 'md-show' );
+
+                        if( hasPerspective ) {
+                            classie.remove( document.documentElement, 'md-perspective' );
+                        }
+                    }
+
+                    function removeModalHandler() {
+                        removeModal( classie.has( el, 'md-setperspective' ) ); 
+                    }
+
+                    el.addEventListener( 'click', function( ev ) {
+                        classie.add( modal, 'md-show' );
+                        overlay.removeEventListener( 'click', removeModalHandler );
+                        overlay.addEventListener( 'click', removeModalHandler );
+
+                        if( classie.has( el, 'md-setperspective' ) ) {
+                            setTimeout( function() {
+                                classie.add( document.documentElement, 'md-perspective' );
+                            }, 25 );
+                        }
+                    });
+
+                    $.each(closes, function() {
+                        $(this)[0].addEventListener( 'click', function( ev ) {
+                            ev.stopPropagation();
+                            removeModalHandler();
+                            $('#itemFormule').text($(this).text());
+                            $('#command > ul').children().last().attr("itemFormule", $('#itemFormule').text());
+                        });
+                    })
+                });
+            }
 
             [].slice.call(document.querySelectorAll('.tabs')).forEach(function(e) {
                 new CBPFWTabs(e);
             });
 
             function recalculate() {
-
                 var commands = [];
+                var itemFormule;
 
-                $.each($(".command > ul > li"), function() {
+                $.each($("#command > ul > li"), function(e, i) {
                     var item = itemList[$(this).attr("id")];
-
+                    if ($(this).attr("itemformule")) {
+                        itemformule = ' (' + $(this).attr("itemformule") + ')';
+                        item.name += itemformule;
+                    }
                     var mode = $('button.switch').attr('mode');
                     var command = {
                         _id: item._id,
@@ -88,13 +140,14 @@
                         );
                     }
                 });
-
             }
 
-            var socket   = io(window.location.origin + '/sellers');
-            var itemList = [];
-            var purchaseList = [];
-            var item;
+            formules.push("Crêpe sucrée + Boisson Chaude (jusqu'à 10h30)");
+            formules.push("Pizza + Canette + Barre");
+            formules.push("Pizza + Canette + Crêpe sucrée");
+            formules.push("Sandwich + Canette + Barre");
+            formules.push("Sandwich + Canette + Crêpe sucrée");
+            // console.log(formules);
 
             // Retrieve all items
             socket.on('itemList', function(_itemList) {
@@ -112,7 +165,17 @@
                     var tabs = ['drinks', 'bars', 'crepes', 'croques', 'sandwiches', 'pizzas', 'formules'];
                     $('#section-bar-' + ($.inArray(value.type, tabs) + 1)).append(item);
 
+                    // omg ne regardez pas ça 
+                    // modals pour le choix de la formule
+                    if (value.name == formules[0] ) {
+                        $('.item#' + index).addClass("md-trigger").attr('data-modal', 'boisson');
+                    } else if (value.name == formules[1] || value.name == formules[2]) {
+                        $('.item#' + index).addClass("md-trigger").attr('data-modal', 'pizza');
+                    } else if (value.name == formules[3] || value.name == formules[4]) {
+                        $('.item#' + index).addClass("md-trigger").attr('data-modal', 'sandwich');
+                    } 
                 });
+                init();
             });
 
             // Click on an item.
@@ -206,7 +269,50 @@
 </head>
 
 <body>
-    <div class="command">
+    <div id="itemFormule" style="display: none;"></div>
+    <div class="md-modal md-effect-8" id="boisson">
+        <div class="md-content">
+            <h3>Choix de la boisson</h3>
+            <div>
+                <ul>
+                    <li><button class="btn btn-2 btn-2a">Café</a></li>
+                    <li><button class="btn btn-2 btn-2a">Thé</a></li>
+                    <li><button class="btn btn-2 btn-2a">Chocolat</a></li>
+                </ul>
+                <!-- <button class="md-close">Close me!</button> -->
+            </div>
+        </div>
+    </div>
+    <div class="md-modal md-effect-8" id="pizza">
+        <div class="md-content">
+            <h3>Choix de la pizza</h3>
+            <div>
+                <ul>
+                    <li><button class="btn btn-2 btn-2a">Royale</a></li>
+                    <li><button class="btn btn-2 btn-2a">Bolognaise</a></li>
+                    <li><button class="btn btn-2 btn-2a">4 fromages</a></li>
+                    <li><button class="btn btn-2 btn-2a">Chorizo</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="md-modal md-effect-8" id="sandwich">
+        <div class="md-content">
+            <h3>Choix du sandwich</h3>
+            <div>
+                <ul>
+                    <li><button class="btn btn-2 btn-2a">Jambon Fromage Beurre</a></li>
+                    <li><button class="btn btn-2 btn-2a">Jambon Salade Tomate Beurre</a></li>
+                    <li><button class="btn btn-2 btn-2a">Thon Mayo Salade Tomate</a></li>
+                    <li><button class="btn btn-2 btn-2a">Dinde Salade Tomate</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- <button class="md-trigger" data-modal="modal-8">3D Flip (horizontal)</button> -->
+
+    <div class="command" id="command">
         <h1 class="title">Commande</h1>
         <h3>Vous êtes en mode <b>normal</b></h3>
         <button class="btn btn-2 btn-2a switch" mode="normal">Passer en tarif réduit</button>
@@ -271,6 +377,11 @@
         €)</button>
     <ul class="list" id="commands">
     </ul>
+    <div class="md-overlay"></div><!-- the overlay element -->
+
+    <!-- classie.js by @desandro: https://github.com/desandro/classie -->
+    <script src="/bower_components/ModalWindowEffects/js/classie.js"></script>
+    <script src="/bower_components/ModalWindowEffects/js/modalEffects.js"></script>
 </body>
 
 </html>

@@ -11,6 +11,7 @@ html, body {
     height: 100%;
     float: left;
     text-align: center;
+    position: fixed;
 }
 
 .command > ul {
@@ -56,6 +57,7 @@ html, body {
 }
 
 section#tab {
+    margin-left: calc(18% - 1px);
     width: calc(52% - 1px);
     float: left;
 }
@@ -121,7 +123,7 @@ button.buy {
     height: 10%;
     left: 0;
     bottom: 0;
-    position: absolute;
+    position: fixed;
     width: 18%;
 }
 
