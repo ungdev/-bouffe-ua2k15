@@ -98,6 +98,7 @@ sellers.on('connection', function(socket) {
                 _item: item._id,
                 price: item.price,
                 name : item.name,
+                sendToCook: item.sendToCook,
                 state: 'pending'
             });
         });
@@ -110,11 +111,13 @@ sellers.on('connection', function(socket) {
                 console.log(purchases);
 
                 // Send command to cookers
-                cookers.emit('newCommand', purchases);                
-            })
-            // Seller page needs IDs of newly created purchases to display them (hidden field ID)
-            .then(function(purchases) {
-                sellers.emit('getOrders', purchases);
+                cookers.emit('newCommand', purchases);
+
+                process.nextTick(function () {
+                    // Seller page needs IDs of newly created purchases to display them (hidden field ID)
+                    sellers.emit('getOrders', purchases);
+
+                });
             })
             .catch(function(err) {
                 console.log(new Error(err));

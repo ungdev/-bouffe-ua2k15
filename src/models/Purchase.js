@@ -6,6 +6,7 @@ var purchaseSchema = new Schema({
     price: Number,
     state: String,
     name : String,
+    sendToCook: Boolean,
     created_at: { type: Date }
 });
 

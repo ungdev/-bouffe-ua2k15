@@ -24,16 +24,18 @@
                 new CBPFWTabs(e);
             });
 
-            function recalculate(send) {
+            function recalculate() {
 
                 var commands = [];
 
                 $.each($(".command > ul > li"), function() {
                     var item = itemList[$(this).attr("id")];
+
                     var mode = $('button.switch').attr('mode');
                     var command = {
                         _id: item._id,
                         price: mode == 'normal' ? item.normalPrice : item.reducedPrice,
+                        sendToCook: item.sendToCook,
                         name: item.name
                     };
                     commands.push(command);
@@ -44,46 +46,47 @@
             // only call this function when the orders/purchases are already created by the cookers with newCommand (need ID field)
             function fillOrders(orders) {
                 orders.forEach(function(purchase) {
-                    // retrieve state of each order to display the information
-                    console.log(purchase.state);
-                    var stateClass;
-                    var state;
-                    var disableCook = "";
-                    var disableReady = "";
-                    var disableDone = "";
+                    if (purchase.sendToCook == true) {
+                        // retrieve state of each order to display the information
+                        var stateClass;
+                        var state;
+                        var disableCook = "";
+                        var disableReady = "";
+                        var disableDone = "";
 
-                    switch(purchase.state) {
-                        case "pending":
-                            stateClass="statusNone";
-                            state = "Non préparé";
-                            disableCook = "disabled";
-                            disableReady = "disabled";
-                            disableDone = "disabled";
-                            break;
-                        case "inProgress":
-                            stateClass="statusDoing";
-                            state = "En préparation";
-                            disableReady = "disabled";
-                            disableDone = "disabled";
-                            break;
-                        case "ready":
-                            stateClass="statusReady";
-                            state = "Prêt";
-                            disableCook = "disabled";
-                            disableDone = "disabled";
-                            break;
-                        case "done":
-                            disableCook = "disabled";
-                            disableCook = "disabled";
-                            disableReady = "disabled";
-                            disableDone = "disabled";
-                            stateClass="statusDone";
-                            state="Terminé";
-                            break;
+                        switch(purchase.state) {
+                            case "pending":
+                                stateClass="statusNone";
+                                state = "Non préparé";
+                                disableCook = "disabled";
+                                disableReady = "disabled";
+                                disableDone = "disabled";
+                                break;
+                            case "inProgress":
+                                stateClass="statusDoing";
+                                state = "En préparation";
+                                disableReady = "disabled";
+                                disableDone = "disabled";
+                                break;
+                            case "ready":
+                                stateClass="statusReady";
+                                state = "Prêt";
+                                disableCook = "disabled";
+                                disableDone = "disabled";
+                                break;
+                            case "done":
+                                disableCook = "disabled";
+                                disableCook = "disabled";
+                                disableReady = "disabled";
+                                disableDone = "disabled";
+                                stateClass="statusDone";
+                                state="Terminé";
+                                break;
+                        }
+                        $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h2 class="title">' + purchase.name + '</h2><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
+
+                        );
                     }
-                    $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h2 class="title">' + purchase.name + '</h2><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
-
-                    );
                 });
 
             }
@@ -99,12 +102,12 @@
                     $(this).empty();
                 });
 
-                console.log('[DEBUG] Received item list');
-                console.log(_itemList);
+                // console.log('[DEBUG] Received item list');
+                // console.log(_itemList);
                 itemList = _itemList;
 
                 $.each(itemList, function(index, value) {
-                    item = '<div class="item" id=' + index + '><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice/100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice/100).toFixed(2)  + ' €</div></div>';
+                    item = '<div class="item" id=' + index + ' sendtocook="' + value.sendToCook + '"><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice/100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice/100).toFixed(2)  + ' €</div></div>';
 
                     var tabs = ['drinks', 'bars', 'crepes', 'croques', 'sandwiches', 'pizzas', 'formules'];
                     $('#section-bar-' + ($.inArray(value.type, tabs) + 1)).append(item);
@@ -120,8 +123,8 @@
 
             // Retrieve all purchases
             socket.on('purchaseList', function(_purchaseList) {
-                console.log('[DEBUG] Received purchase list for seller');
-                console.log(_purchaseList);
+                // console.log('[DEBUG] Received purchase list for seller');
+                // console.log(_purchaseList);
 
                 purchaseList = _purchaseList // .slice().reverse();
                 fillOrders(purchaseList);
@@ -129,9 +132,9 @@
 
             // Recceive purchase updated by cookers
             socket.on('updatedPurchase', function(purchase, data) {
-                console.log('[DEBUG] Purchase updated from cookers: ');
-                console.log(data.state);
-                console.log(purchase);
+                // console.log('[DEBUG] Purchase updated from cookers: ');
+                // console.log(data.state);
+                // console.log(purchase);
 
                 switch(data.state) {
                     case "inProgress":
@@ -155,7 +158,6 @@
 
             // Received newly purchases, created by itself because it needs the IDs generated by mongo 
             socket.on('getOrders', function(purchases) {
-                console.log(purchases);
                 fillOrders(purchases);
             });
 
@@ -185,8 +187,8 @@
             $('#send').on('click', function() {
                 var commands = recalculate();
                 socket.emit('newCommand', commands);
-                console.log('[DEBUG] Command sent: ');
-                console.log(commands);
+                // console.log('[DEBUG] Command sent: ');
+                // console.log(commands);
 
                 $(".command > ul").empty();
                 $(document).trigger('ordersChanged');
