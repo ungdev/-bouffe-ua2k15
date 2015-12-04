@@ -120,7 +120,7 @@ mongoose
         }
     })
     .then(function() {
-        return server.listenAsync(config.express.port);
+        return server.listenAsync(config.express.port, config.express.host);
     })
     .then(function() {
         console.log('[OK] Server listening on 0.0.0.0:' + config.express.port);
