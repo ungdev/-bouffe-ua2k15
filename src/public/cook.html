@@ -30,12 +30,18 @@
                         $('#commands').append('<li class="entry statusNone" id=' + $(this)[0]._id + '><div class="main"><h1 class="title">' + $(this)[0].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook"><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
 
                         divPurchase = $('#' + $(this)[0]._id);
+
+                        // $.each( function() {
+                        //     console.log($(this));
+                        // });
+
                         divPurchase.find('.buttons > button').on('click', function(e) {
                             console.log('[DEBUG] updatePurchase');
 
                             if ($(this).hasClass('statusCook')) {
                                 $(this).next().prop('disabled', false);
                                 $(this).prop('disabled', true);
+                                console.log(divPurchase);
                                 divPurchase.removeClass('statusNone').addClass('statusDoing');
                                 divPurchase.find('.status').text("En préparation");
                                 updatePurchase = "inProgress";
@@ -67,7 +73,7 @@
 
                         divPurchase.find('.buttons > button').on('click', function(e) {
                             console.log('[DEBUG] updatePurchase');
-                            console.log($(this));
+
                             if ($(this).hasClass('statusCook')) {
                                 $(this).next().prop('disabled', false);
                                 $(this).prop('disabled', true);
