@@ -48,7 +48,7 @@ cookers.on('connection', function(socket) {
         // console.log(data.purchase);
 
         Purchase
-            .findByIdAndUpdateAsync(data.purchase._id, { state: 'inProgress' })
+            .findByIdAndUpdateAsync(data.purchase._id, { state: data.state })
             .then(function(purchase) {
                 console.log('[DEBUG] Purchase updated');
                 console.log(purchase);

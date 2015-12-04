@@ -30,28 +30,42 @@
                         $('#commands').append('<li class="entry statusNone" id=' + $(this)[0]._id + '><div class="main"><h1 class="title">' + $(this)[0].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook"><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
 
                         divPurchase = $('#' + $(this)[0]._id);
-                        divPurchase.find('.buttons').children().each(function(button) {
-                            if ($(this).hasClass('statusCook')) {
-                                $(this).next().prop('disabled', false);
-                                $(this).prop('disabled', true);
-                                console.log(divPurchase);
-                                divPurchase.removeClass('statusNone').addClass('statusDoing');
-                                divPurchase.find('.status').text("En préparation");
-                                updatePurchase = "inProgress";
-                            } else if ($(this).hasClass('statusReady')) {
-                                $(this).next().prop('disabled', false);
-                                $(this).prop('disabled', true);
-                                divPurchase.removeClass('statusDoing').addClass('statusReady');
-                                divPurchase.find('.status').text("Prêt");
-                                updatePurchase = "ready";
-                            } else if ($(this).hasClass('statusDone')) {
-                                divPurchase.fadeOut(500);
-                                updatePurchase = "done";
-                            }
-                            socket.emit('updatePurchase', {
-                                purchase: purchase,
-                                state: updatePurchase
+
+                        divPurchase.find('.buttons').children().each(function() {
+
+                            $(this).on('click', function() {
+                                if ($(this).hasClass('statusCook')) {
+                                    $(this).next().prop('disabled', false);
+                                    $(this).prop('disabled', true);
+                                    $(this).parent().parent().removeClass('statusNone').addClass('statusDoing');
+                                    $(this).parent().parent().find('.status').text("En préparation");
+                                    updatePurchase = "inProgress";
+                                }
+                                else if ($(this).hasClass('statusReady')) {
+                                    $(this).next().prop('disabled', false);
+                                    $(this).prop('disabled', true);
+                                    $(this).parent().parent().removeClass('statusDoing').addClass('statusReady');
+                                    $(this).parent().parent().find('.status').text("Prêt");
+                                    updatePurchase = "ready";
+                                } else if ($(this).hasClass('statusDone')) {
+                                    $(this).parent().parent().fadeOut(500);
+                                    updatePurchase = "done";
+                                }
+                                socket.emit('updatePurchase', {
+                                    purchase: purchase,
+                                    state: updatePurchase
+                                });
                             });
+                            
+                        });
+
+                        $('#send').on('click', function() {
+                            var commands = recalculate(true);
+                            socket.emit('newCommand', commands);
+                            console.log('[DEBUG] Command sent: ' + commands);
+                            console.log(commands);
+                            $(".command > ul").empty();
+                            $(document).trigger('ordersChanged');
                         });
                     });
                 });
@@ -64,30 +78,34 @@
                         $('#commands').prepend('<li class="entry statusNone" id=' + purchase._id + '><div class="main"><h1 class="title">' + purchase.name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook"><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
                         divPurchase = $('#' + purchase._id);
 
-                        divPurchase.find('.buttons > button').on('click', function(e) {
-                            console.log('[DEBUG] updatePurchase');
+                        divPurchase.find('.buttons').children().each(function() {
 
-                            if ($(this).hasClass('statusCook')) {
-                                $(this).next().prop('disabled', false);
-                                $(this).prop('disabled', true);
-                                divPurchase.removeClass('statusNone').addClass('statusDoing');
-                                divPurchase.find('.status').text("En préparation");
-                                updatePurchase = "inProgress";
-                            } else if ($(this).hasClass('statusReady')) {
-                                $(this).next().prop('disabled', false);
-                                $(this).prop('disabled', true);
-                                divPurchase.removeClass('statusDoing').addClass('statusReady');
-                                divPurchase.find('.status').text("Prêt");
-                                updatePurchase = "ready";
-                            } else if ($(this).hasClass('statusDone')) {
-                                divPurchase.fadeOut(500);
-                                updatePurchase = "done";
-                            }
-                            socket.emit('updatePurchase', {
-                                purchase: purchase,
-                                state: updatePurchase
+                            $(this).on('click', function() {
+                                if ($(this).hasClass('statusCook')) {
+                                    $(this).next().prop('disabled', false);
+                                    $(this).prop('disabled', true);
+                                    $(this).parent().parent().removeClass('statusNone').addClass('statusDoing');
+                                    $(this).parent().parent().find('.status').text("En préparation");
+                                    updatePurchase = "inProgress";
+                                }
+                                else if ($(this).hasClass('statusReady')) {
+                                    $(this).next().prop('disabled', false);
+                                    $(this).prop('disabled', true);
+                                    $(this).parent().parent().removeClass('statusDoing').addClass('statusReady');
+                                    $(this).parent().parent().find('.status').text("Prêt");
+                                    updatePurchase = "ready";
+                                } else if ($(this).hasClass('statusDone')) {
+                                    $(this).parent().parent().fadeOut(500);
+                                    updatePurchase = "done";
+                                }
+                                socket.emit('updatePurchase', {
+                                    purchase: purchase,
+                                    state: updatePurchase
+                                });
                             });
-                         });
+                            
+                        });
+
                     });
                 });
 
