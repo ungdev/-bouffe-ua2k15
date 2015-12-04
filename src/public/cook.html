@@ -13,13 +13,46 @@
             $(function() {
                 var socket       = io(window.location.origin + '/cookers');
                 var purchaseList = [];
+                var purchase;
+                var divPurchase;
 
                 socket.on('purchaseList', function(_purchaseList) {
+                    // db.penguins.find().forEach(function (doc){ d = doc._id.getTimestamp(); print(d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()) })
+
                     console.log('[DEBUG] Received purchase list');
                     console.log(_purchaseList);
 
-                    purchaseList = _purchaseList;
+                    purchaseList = _purchaseList.slice().reverse();
                     // TODO: Display purchase list
+                    $.each(purchaseList, function() {
+                        var purchase = $(this)[0];
+
+                        $('#commands').append('<li class="entry statusNone" id=' + $(this)[0]._id + '><div class="main"><h1 class="title">' + $(this)[0].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook"><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
+
+                        var divPurchase = $('#' + $(this)[0]._id);
+                        divPurchase.find('.buttons > button').on('click', function(e) {
+                            // TODO: change display
+                            console.log (purchase);
+                            console.log('[DEBUG] updatePurchase');
+                            socket.emit('updatePurchase', {
+                                purchase: purchase,
+                                state: 'inProgress'
+                            });
+                            if ($(this).hasClass('statusCook')) {
+                                $(this).next().prop('disabled', false);
+                                $(this).prop('disabled', true);
+                                divPurchase.removeClass('statusNone').addClass('statusDoing');
+                                divPurchase.find('.status').text("En préparation");
+                            } else if ($(this).hasClass('statusReady')) {
+                                $(this).next().prop('disabled', false);
+                                $(this).prop('disabled', true);
+                                divPurchase.removeClass('statusDoing').addClass('statusReady');
+                                divPurchase.find('.status').text("Prêt");
+                            } else if ($(this).hasClass('statusDone')) {
+                                divPurchase.fadeOut(500);
+                            }
+                        });
+                    });
                 });
 
                 socket.on('newCommand', function(purchases) {
@@ -31,83 +64,11 @@
                     });
                 });
 
-                $('.buttons').on('click', function(e) {
-                    // TODO: change display
-
-                    console.log('[DEBUG] updatePurchase');
-                    socket.emit('updatePurchase', {
-                        purchase: purchaseList[0],
-                        state: 'inProgress'
-                    });
-                });
             });
         </script>
     </head>
     <body>
         <ul id="commands">
-            <li class="entry statusNone">
-                <div class="main">
-                    <h1 class="title">Pizza</h1>
-                    <span class="timer">0:56</span>
-                    <span class="status">Non préparé</span>
-                </div>
-                <div class="buttons">
-                    <button class="statusCook">
-                        <img src="img/cook.png" alt="Cooking" height="30" width="30">
-                        <span>Préparation</span>
-                    </button>
-                    <button class="statusReady" disabled>
-                        <img src="img/ready.png" alt="Ready" height="30" width="30">
-                        <span>Prêt</span>
-                    </button>
-                    <button class="statusDone" disabled>
-                        <img src="img/done.png" alt="Servi" height="30" width="30">
-                        <span>Envoyé</span>
-                    </button>
-                </div>
-            </li>
-            <li class="entry statusDoing">
-                <div class="main">
-                    <h1 class="title">Pizza</h1>
-                    <span class="timer">0:56</span>
-                    <span class="status">En préparation</span>
-                </div>
-                <div class="buttons">
-                    <button class="statusCook" disabled>
-                        <img src="img/cook.png" alt="Cooking" height="30" width="30">
-                        <span>Préparation</span>
-                    </button>
-                    <button class="statusReady">
-                        <img src="img/ready.png" alt="Ready" height="30" width="30">
-                        <span>Prêt</span>
-                    </button>
-                    <button class="statusDone" disabled>
-                        <img src="img/done.png" alt="Servi" height="30" width="30">
-                        <span>Envoyé</span>
-                    </button>
-                </div>
-            </li>
-            <li class="entry statusReady">
-                <div class="main">
-                    <h1 class="title">Pizza</h1>
-                    <span class="timer">0:56</span>
-                    <span class="status">Prêt !</span>
-                </div>
-                <div class="buttons">
-                    <button class="statusCook" disabled>
-                        <img src="img/cook.png" alt="Cooking" height="30" width="30">
-                        <span>Préparation</span>
-                    </button>
-                    <button class="statusReady" disabled>
-                        <img src="img/ready.png" alt="Ready" height="30" width="30">
-                        <span>Prêt</span>
-                    </button>
-                    <button class="statusDone">
-                        <img src="img/done.png" alt="Servi" height="30" width="30">
-                        <span>Envoyé</span>
-                    </button>
-                </div>
-            </li>
         </ul>
     </body>
 </html>

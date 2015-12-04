@@ -28,12 +28,16 @@
                 var item;
 
                 socket.on('itemList', function(_itemList) {
+                    $.each($(".content-wrap > section"), function() {
+                        $(this).empty();
+                    });
+
                     console.log('[DEBUG] Received item list');
                     console.log(_itemList);
                     itemList = _itemList;
 
                     $.each(itemList, function(index, value) {
-                        item = '<div class="item"><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice/100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice/100).toFixed(2)  + ' €</div></div>';
+                        item = '<div class="item" id=' + index + '><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice/100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice/100).toFixed(2)  + ' €</div></div>';
                         if (value.type == "drinks") {
                             $('#section-bar-1').append(item);
                         }
@@ -59,32 +63,58 @@
 
                     $.each($(".item"), function() {
                         $(this).on("click", function() {
-                            $(".command > ul").append('<li>' + $(this).find(".name").text() + '<span class="close"> X</span></li>') 
+                            $(".command > ul").append('<li id=' + $(this).attr("id") +'>' + $(this).find(".name").text() + '<span class="close"> X</span></li>');
                         });
                     });
+                });
+
+                socket.on('updatedPurchase', function(purchase) {
+                    console.log('[DEBUG] Purchase received: ');
+                    console.log(purchase);
+                    // UPDATE DIV PURCHASE
                 });
 
 
                 $('#send').on('click', function() {
                     // TODO: reset ordered item list
-                    $.each($(".command > ul > li"), function() {
-                        
-                    });
+                    var command = [];
 
-                    var command = [
-                        {
-                            _id: itemList[0]._id,
-                            price: itemList[0].normalPrice
-                        },
-                        {
-                            _id: itemList[1]._id,
-                            price: itemList[1].reducedPrice
+                    $.each($(".command > ul > li"), function() {
+                        if ($('button.switch').attr('mode') == "normal") {
+                            command.push({_id: itemList[$(this).attr("id")]._id,  price: itemList[$(this).attr("id")].normalPrice, name: itemList[$(this).attr("id")].name});
+                        } else {
+                            command.push({_id: itemList[$(this).attr("id")]._id,  price: itemList[$(this).attr("id")].reducedPrice, name: itemList[$(this).attr("id")].name});
                         }
-                    ];
+                        $("#commands").append('<li class="entry statusNone" id=' + itemList[$(this).attr("id")]._id + '><div class="main"><h1 class="title">' + itemList[$(this).attr("id")].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');                        
+                    });
 
                     socket.emit('newCommand', command);
                     console.log('[DEBUG] Command sent: ');
                     console.log(command)
+                    $(".command > ul").empty();
+                    
+            //                     <li class="entry statusNone">
+            //     <div class="main">
+            //         <h1 class="title">Pizza</h1>
+            //         <span class="timer">0:56</span>
+            //         <span class="status">Non préparé</span>
+            //     </div>
+            //     <div class="buttons">
+            //         <button class="statusCook">
+            //             <img src="img/cook.png" alt="Cooking" height="30" width="30">
+            //             <span>Préparation</span>
+            //         </button>
+            //         <button class="statusReady" disabled>
+            //             <img src="img/ready.png" alt="Ready" height="30" width="30">
+            //             <span>Prêt</span>
+            //         </button>
+            //         <button class="statusDone" disabled>
+            //             <img src="img/done.png" alt="Servi" height="30" width="30">
+            //             <span>Envoyé</span>
+            //         </button>
+            //     </div>
+            // </li>
+
                 });
 
                 $('button.switch').on('click', function() {
@@ -138,8 +168,8 @@
             </div>
         </section>
         <button id="send" class="buy">Payer (total : <span class="color">2.0 €</span>)</button>
-        <ul class="list">
-            <li class="entry statusNone">
+        <ul id="commands" class="list">
+            <!-- <li class="entry statusNone">
                 <div class="main">
                     <h1 class="title">Pizza</h1>
                     <span class="timer">0:56</span>
@@ -201,7 +231,7 @@
                         <span>Envoyé</span>
                     </button>
                 </div>
-            </li>
+            </li> -->
         </ul>
     </body>
 </html>

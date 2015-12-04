@@ -45,13 +45,14 @@ cookers.on('connection', function(socket) {
 
     socket.on('updatePurchase', function(data) {
         console.log('[DEBUG] New purchase state: ' + data.state);
-        console.log(data.purchase);
+        // console.log(data.purchase);
 
         Purchase
             .findByIdAndUpdateAsync(data.purchase._id, { state: 'inProgress' })
             .then(function(purchase) {
                 console.log('[DEBUG] Purchase updated');
                 console.log(purchase);
+                sellers.emit('updatedPurchase', purchase);
             })
             .catch(function(err) {
                 console.log(new Error(err));
@@ -80,6 +81,7 @@ sellers.on('connection', function(socket) {
             purchases.push({
                 _item: item._id,
                 price: item.price,
+                name : item.name,
                 state: 'pending'
             });
         });
