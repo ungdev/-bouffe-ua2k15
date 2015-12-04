@@ -30,7 +30,7 @@ cookers.on('connection', function(socket) {
     // Send pending and in progress purchases
     Purchase
         .find()
-        .where('state').in(['pending', 'inProgress'])
+        .where('state').in(['pending', 'inProgress', 'ready'])
         .execAsync()
         .then(function(purchases) {
             if (purchases.length !== 0) {
@@ -70,6 +70,20 @@ sellers.on('connection', function(socket) {
             console.log('[DEBUG] Send item list');
 
             sellers.emit('itemList', items);
+        });
+
+    Purchase
+        .find()
+        .where('state').in(['pending', 'inProgress', 'ready'])
+        .execAsync()
+        .then(function(purchases) {
+            if (purchases.length !== 0) {
+                console.log('[DEBUG] Send purchase list');
+                socket.emit('purchaseList', purchases);
+            }
+        })
+        .catch(function(err) {
+            console.log(new Error(err));
         });
 
     socket.on('newCommand', function(command) {

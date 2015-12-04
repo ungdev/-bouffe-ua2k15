@@ -25,12 +25,14 @@
 
                 var socket   = io(window.location.origin + '/sellers');
                 var itemList = [];
+                var purchaseList = [];
                 var item;
 
                 socket.on('itemList', function(_itemList) {
                     $.each($(".content-wrap > section"), function() {
                         $(this).empty();
                     });
+                    $('#section-bar-4').append('<div id="croques"></div><div id="sandwiches"></div>');
 
                     console.log('[DEBUG] Received item list');
                     console.log(_itemList);
@@ -48,6 +50,7 @@
                             $('#section-bar-3').append(item);
                         }
                         else if (value.type == "croques") {
+                            console.log($(this));
                             $('#section-bar-4 > #croques').append(item);
                         }
                         else if (value.type == "sandwiches") {
@@ -68,12 +71,24 @@
                     });
                 });
 
+                socket.on('purchaseList', function(_purchaseList) {
+                    console.log('[DEBUG] Received purchase list for seller');
+                    console.log(_purchaseList);
+
+                    purchaseList = _purchaseList.slice().reverse();
+                    $.each(purchaseList, function() {
+                        var purchase = $(this)[0];
+
+                        $('#commands').append('<li class="entry statusNone" id=' + $(this)[0]._id + '><div class="main"><h2 class="title">' + $(this)[0].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
+
+                        });
+                });
+
                 socket.on('updatedPurchase', function(purchase) {
                     console.log('[DEBUG] Purchase received: ');
                     console.log(purchase);
                     // UPDATE DIV PURCHASE
                 });
-
 
                 $('#send').on('click', function() {
                     // TODO: reset ordered item list
@@ -85,7 +100,7 @@
                         } else {
                             command.push({_id: itemList[$(this).attr("id")]._id,  price: itemList[$(this).attr("id")].reducedPrice, name: itemList[$(this).attr("id")].name});
                         }
-                        $("#commands").append('<li class="entry statusNone" id=' + itemList[$(this).attr("id")]._id + '><div class="main"><h1 class="title">' + itemList[$(this).attr("id")].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');                        
+                        $("#commands").prepend('<li class="entry statusNone" id=' + itemList[$(this).attr("id")]._id + '><div class="main"><h2 class="title">' + itemList[$(this).attr("id")].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');                        
                     });
 
                     socket.emit('newCommand', command);
