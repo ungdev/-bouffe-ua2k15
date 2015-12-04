@@ -25,7 +25,7 @@
             var purchaseList = [];
             var item;
             var formules = [];
-            var itemFormule;
+            // var itemFormule;
 
             function init() {
                 var overlay = document.querySelector( '.md-overlay' );
@@ -64,6 +64,7 @@
                             removeModalHandler();
                             $('#itemFormule').text($(this).text());
                             $('#command > ul').children().last().attr("itemFormule", $('#itemFormule').text());
+                            $('#itemFormule').text("");
                         });
                     })
                 });
@@ -75,20 +76,26 @@
 
             function recalculate() {
                 var commands = [];
-                var itemFormule;
+                var stringName;
 
                 $.each($("#command > ul > li"), function(e, i) {
                     var item = itemList[$(this).attr("id")];
-                    if ($(this).attr("itemformule")) {
-                        itemformule = ' (' + $(this).attr("itemformule") + ')';
-                        item.name += itemformule;
+                    var attr = $(this).attr('itemformule');
+
+                    // For some browsers, `attr` is undefined; for others,
+                    // `attr` is false.  Check for both.
+                    if (typeof attr !== typeof undefined && attr !== false) {
+                        stringName = item.name + ' (' + $(this).attr("itemformule") + ')';
+                    } else {
+                        stringName = item.name;
                     }
+
                     var mode = $('button.switch').attr('mode');
                     var command = {
                         _id: item._id,
                         price: mode == 'normal' ? item.normalPrice : item.reducedPrice,
                         sendToCook: item.sendToCook,
-                        name: item.name
+                        name: stringName
                     };
                     commands.push(command);
                 });
@@ -135,7 +142,7 @@
                                 state="Terminé";
                                 break;
                         }
-                        $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h3 class="title">' + purchase.name + '</h3><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
+                        $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h4 class="title">' + purchase.name + '</h4><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
 
                         );
                     }

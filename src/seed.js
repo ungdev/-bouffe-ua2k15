@@ -9,70 +9,77 @@ var items = [
         type: 'drinks',
         normalPrice: 100,
         reducedPrice: 100,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Coca Cola Zero',
         type: 'drinks',
         normalPrice: 100,
         reducedPrice: 100,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Lipton Ice Tea Citron',
         type: 'drinks',
         normalPrice: 100,
         reducedPrice: 100,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Lipton Ice Tea Pêche',
         type: 'drinks',
         normalPrice: 100,
         reducedPrice: 100,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Schweppes Agrum',
         type: 'drinks',
         normalPrice: 100,
         reducedPrice: 100,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Oasis Tropical',
         type: 'drinks',
         normalPrice: 100,
         reducedPrice: 100,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Sprite',
         type: 'drinks',
         normalPrice: 100,
         reducedPrice: 100,
-        sendToCook: false
+        sendToCook: true
+    },
+    {
+        name: 'Minute Maid Orange',
+        type: 'drinks',
+        normalPrice: 100,
+        reducedPrice: 100,
+        sendToCook: true
     },
     {
         name: 'Monster Assault',
         type: 'drinks',
         normalPrice: 250,
         reducedPrice: 200,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Monster Absolute Zero',
         type: 'drinks',
         normalPrice: 250,
         reducedPrice: 200,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Monster Ripper',
         type: 'drinks',
         normalPrice: 250,
         reducedPrice: 200,
-        sendToCook: false
+        sendToCook: true
     },
     {
         name: 'Café',
@@ -292,42 +299,54 @@ var items = [
         sendToCook: true
     },
     {
-        name: '1 Croque Jambon cru + 2 Croques Jambon-Fromage',
+        name: '1 Jambon cru + 2 Jambon-Fromage',
         type: 'formules',
         normalPrice: 400,
         reducedPrice: 400,
         sendToCook: true
     },
     {
-        name: '1 Croque Jambon cru + 2 Croque Chèvre-Miel',
+        name: '1 Jambon cru + 2 Chèvre-Miel',
         type: 'formules',
         normalPrice: 400,
         reducedPrice: 400,
         sendToCook: true
     },
     {
-        name: '3 Croques Jambon-Fromage',
+        name: '3 Jambon-Fromage',
         type: 'formules',
         normalPrice: 350,
         reducedPrice: 350,
         sendToCook: true
     },
     {
-        name: '3 Croques Chèvre-Miel',
+        name: '3 Chèvre-Miel',
+        type: 'formules',
+        normalPrice: 350,
+        reducedPrice: 350,
+        sendToCook: true
+    },    {
+        name: '2 Chèvre-Miel + 1 Jambon-Fromage',
+        type: 'formules',
+        normalPrice: 350,
+        reducedPrice: 350,
+        sendToCook: true
+    },    {
+        name: '2 Jambon-Fromage + 1 Chèvre-Miel',
         type: 'formules',
         normalPrice: 350,
         reducedPrice: 350,
         sendToCook: true
     },
     {
-        name: '2 Croques Jambon-Fromage + 1 Croque Nutella',
+        name: '2 Jambon-Fromage + 1 Nutella',
         type: 'formules',
         normalPrice: 300,
         reducedPrice: 300,
         sendToCook: true
     },
     {
-        name: '2 Croques Chèvre-Miel + 1 Croque Nutella',
+        name: '2 Chèvre-Miel + 1  Nutella',
         type: 'formules',
         normalPrice: 300,
         reducedPrice: 300,
