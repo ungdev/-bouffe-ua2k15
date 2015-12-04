@@ -5,7 +5,8 @@ var itemSchema = new Schema({
     name: String,
     type: String,
     normalPrice: Number,
-    reducedPrice: Number
+    reducedPrice: Number,
+    sendToCook: Boolean
 });
 
 var Item = mongoose.model('Item', itemSchema);

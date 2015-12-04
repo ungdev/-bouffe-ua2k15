@@ -18,19 +18,80 @@
     <script src="/js/modernizr.custom.js"></script>
     <script src="/js/cbpFWTabs.js"></script>
     <script>
-        'use strict';
-
         $(function() {
 
             [].slice.call(document.querySelectorAll('.tabs')).forEach(function(e) {
                 new CBPFWTabs(e);
             });
 
+            function recalculate(send) {
+
+                var commands = [];
+
+                $.each($(".command > ul > li"), function() {
+                    var item = itemList[$(this).attr("id")];
+                    var mode = $('button.switch').attr('mode');
+                    var command = {
+                        _id: item._id,
+                        price: mode == 'normal' ? item.normalPrice : item.reducedPrice,
+                        name: item.name
+                    };
+                    commands.push(command);
+                });
+                return commands;
+            }
+
+            // only call this function when the orders/purchases are already created by the cookers with newCommand (need ID field)
+            function fillOrders(orders) {
+                orders.forEach(function(purchase) {
+                    // retrieve state of each order to display the information
+                    console.log(purchase.state);
+                    var stateClass;
+                    var state;
+                    var disableCook = "";
+                    var disableReady = "";
+                    var disableDone = "";
+
+                    switch(purchase.state) {
+                        case "pending":
+                            stateClass="statusNone";
+                            state = "Non préparé";
+                            disableCook = "disabled";
+                            disableReady = "disabled";
+                            disableDone = "disabled";
+                            break;
+                        case "inProgress":
+                            stateClass="statusDoing";
+                            state = "En préparation";
+                            disableReady = "disabled";
+                            disableDone = "disabled";
+                            break;
+                        case "ready":
+                            stateClass="statusReady";
+                            state = "Prêt";
+                            disableCook = "disabled";
+                            disableDone = "disabled";
+                            break;
+                        case "done":
+                            disableCook = "disabled";
+                            disableCook = "disabled";
+                            disableReady = "disabled";
+                            disableDone = "disabled";
+                            stateClass="statusDone";
+                            state="Terminé";
+                            break;
+                    }
+                    $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h2 class="title">' + purchase.name + '</h2><div class="group"><span class="timer">' + "Time" + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
+
+                    );
+                });
+
+            }
+
             var socket   = io(window.location.origin + '/sellers');
             var itemList = [];
             var purchaseList = [];
             var item;
-            var orders = [];
 
             // Retrieve all items
             socket.on('itemList', function(_itemList) {
@@ -63,17 +124,39 @@
                 console.log(_purchaseList);
 
                 purchaseList = _purchaseList.slice().reverse();
-                $.each(purchaseList, function() {
-                    var purchase = $(this)[0];
-                    $('#commands').append('<li class="entry statusNone" id=' + $(this)[0]._id + '><div class="main"><h2 class="title">' + $(this)[0].name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
-                });
+                fillOrders(purchaseList);
             });
 
             // Recceive purchase updated by cookers
-            socket.on('updatedPurchase', function(purchase) {
-                console.log('[DEBUG] Purchase received: ');
+            socket.on('updatedPurchase', function(purchase, data) {
+                console.log('[DEBUG] Purchase updated from cookers: ');
+                console.log(data.state);
                 console.log(purchase);
-                // UPDATE DIV PURCHASE
+
+                switch(data.state) {
+                    case "inProgress":
+                        $('#' + purchase._id).removeClass('statusNone').addClass('statusDoing');
+                        $('#' + purchase._id).find('button.statusCook').prop('disabled', false);
+                        break;
+                    case "ready":
+                        $('#' + purchase._id).removeClass('statusDoing').addClass('statusReady');
+                        $('#' + purchase._id).find('button.statusCook').prop('disabled', true);
+                        $('#' + purchase._id).find('button.statusReady').prop('disabled', false);
+                        break;
+                    case "done":
+                        $('#' + purchase._id).find('button.statusReady').prop('disabled', true);
+                        $('#' + purchase._id).find('button.statusDone').prop('disabled', false);
+                        $('#' + purchase._id).fadeOut(500);
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            // Received newly purchases, created by itself because it needs the IDs generated by mongo 
+            socket.on('getOrders', function(purchases) {
+                console.log(purchases);
+                fillOrders(purchases);
             });
 
             // Switch to reduced prices.
@@ -81,11 +164,11 @@
                 if ($(this).attr('mode') == "normal") {
                     $(this).attr('mode', 'reduced');
                     $(this).text("Passer en tarif normal");
-                    $('.command > h3').html("Vous êtes en mode <b>réduit</b>");
+                    $('.command > h3').text("Vous êtes en mode : réduit");
                 } else {
                     $(this).attr('mode', 'normal');
                     $(this).text("Passer en tarif réduit");
-                    $('.command > h3').html("Vous êtes en mode <b>normal</b>");
+                    $('.command > h3').text("Vous êtes en mode : normal");
                 }
                 $(document).trigger('ordersChanged');
             });
@@ -99,41 +182,22 @@
             });
 
             // Send orders to the backend.
+            $('#send').on('click', function() {
+                var commands = recalculate();
+                socket.emit('newCommand', commands);
+                console.log('[DEBUG] Command sent: ');
+                console.log(commands);
 
+                $(".command > ul").empty();
+                $(document).trigger('ordersChanged');
+            });
 
             // Refresh some UI parts when the orders list is updated.
             $(document).on('ordersChanged', function() {
-                orders = [];
-                $.each($(".command > ul > li"), function() {
-                    var item = itemList[$(this).attr("id")];
-                    var mode = $('button.switch').attr('mode');
-                    var command = {
-                        _id: item._id,
-                        price: (mode == 'normal') ? item.normalPrice : item.reducedPrice,
-                        name: item.name
-                    };
-                    orders.push(command);
-                });
                 // Recalculate total price.
-                $('#total-price').html(orders.reduce(function(a, b) {
+                $('#total-price').html(recalculate().reduce(function(a, b) {
                     return a + b.price;
                 }, 0) / 100);
-            });
-
-            $('#send').on('click', function() {
-                $(document).trigger('ordersChanged');
-                $('.command > ul > li').each(function() {
-                    var item = itemList[$(this).attr('id')];
-                    $('#commands').append('<li class="entry statusNone" id=' + item._id +
-                    '><div class="main"><h1 class="title">' + item.name +
-                    '</h1><div class="group"><span class="timer"></span><span class="status">Non préparé</span></div></div>'+
-                    '<div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30">'+
-                    '<span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
-                });
-                socket.emit('newCommand', orders);
-                console.log('[DEBUG] Command sent: ' + orders);
-                console.log(orders);
-                $(".command > ul").empty();
             });
         });
     </script>
@@ -146,8 +210,6 @@
         <button class="btn btn-2 btn-2a switch" mode="normal">Passer en tarif réduit</button>
 
         <ul></ul>
-
-        <button class="buy" id="send">VALIDER<br>Total : <span class="color" id="total-price">0</span> €</button>
     </div>
     <section id="tab">
         <div class="tabs tabs-style-bar">
@@ -202,6 +264,9 @@
             </div>
         </div>
     </section>
+    <button class="buy" id="send">Payer (total :
+        <span class="color" id="total-price">0</span>
+        €)</button>
     <ul class="list" id="commands">
     </ul>
 </body>

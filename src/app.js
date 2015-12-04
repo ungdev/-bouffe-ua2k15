@@ -52,7 +52,8 @@ cookers.on('connection', function(socket) {
             .then(function(purchase) {
                 console.log('[DEBUG] Purchase updated');
                 console.log(purchase);
-                sellers.emit('updatedPurchase', purchase);
+                // Send updated command to sellers
+                sellers.emit('updatedPurchase', purchase, data);
             })
             .catch(function(err) {
                 console.log(new Error(err));
@@ -109,6 +110,8 @@ sellers.on('connection', function(socket) {
 
                 // Send command to cookers
                 cookers.emit('newCommand', purchases);
+                // Seller page needs IDs of newly created purchases to display them (hidden field ID)
+                sellers.emit('getOrders', purchases);
             })
             .catch(function(err) {
                 console.log(new Error(err));
