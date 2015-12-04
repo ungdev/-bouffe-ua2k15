@@ -29,19 +29,15 @@
                 var commands = [];
 
                 $.each($(".command > ul > li"), function() {
-                    if ($('button.switch').attr('mode') == "normal") {
-                        commands.push({
-                            _id: itemList[$(this).attr("id")]._id,
-                            price: itemList[$(this).attr("id")].normalPrice,
-                            name: itemList[$(this).attr("id")].name
-                        });
-                    } else {
-                        commands.push({
-                            _id: itemList[$(this).attr("id")]._id,
-                            price: itemList[$(this).attr("id")].reducedPrice,
-                            name: itemList[$(this).attr("id")].name
-                        });
-                    }
+                    var item = itemList[$(this).attr("id")];
+                    var mode = $('button.switch').attr('mode');
+                    var command = {
+                        _id: item._id,
+                        price: mode == 'normal' ? item.normalPrice : item.reducedPrice,
+                        name: item.name
+                    };
+                    commands.push(command);
+
                     if (send)
                         $("#commands").append('<li class="entry statusNone" id=' + itemList[$(this).attr("id")]._id + '><div class="main"><h1 class="title">' + itemList[$(this).attr("id")].name +
                             '</h1><div class="group"><span class="timer">' + "Time" +
@@ -73,32 +69,11 @@
                     var tabs = ['drinks', 'bars', 'crepes', 'croques', 'sandwiches', 'pizzas', 'formules'];
                     $('#section-bar-' + ($.inArray(value.type, tabs) + 1)).append(item);
 
-                    // if (value.type == "drinks") {
-                    //     $('#section-bar-1').append(item);
-                    // }
-                    // else if (value.type == "bars") {
-                    //     $('#section-bar-2').append(item);
-                    // }
-                    // else if (value.type == "crepes") {
-                    //     $('#section-bar-3').append(item);
-                    // }
-                    // else if (value.type == "croques") {
-                    //     $('#section-bar-4 > #croques').append(item);
-                    // }
-                    // else if (value.type == "sandwiches") {
-                    //     $('#section-bar-4 > #sandwiches').append(item);
-                    // }
-                    // else if (value.type == "pizzas") {
-                    //     $('#section-bar-5').append(item);
-                    // }
-                    // else if (value.type == "formules") {
-                    //     $('#section-bar-6').append(item);
-                    // }
                 });
             });
 
             // Click on an item.
-            $('.content-current').on('click', 'div.item', function() {
+            $('.content-wrap section').on('click', 'div.item', function() {
                 $(".command > ul").append('<li id=' + $(this).attr("id") + '>' + $(this).find(".name").text() + '<span class="remove-item"> X</span></li>');
                 $(document).trigger('ordersChanged');
             });
@@ -193,7 +168,7 @@
             <nav>
                 <ul>
                     <li>
-                        <a class="icon icon-coffee" href="#section-bar-1">
+                        <a href="#section-bar-1">
                             <span>Boissons</span>
                         </a>
                     </li>
