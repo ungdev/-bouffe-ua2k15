@@ -35,8 +35,9 @@ cookers.on('connection', function(socket) {
         .then(function(purchases) {
             if (purchases.length !== 0) {
                 console.log('[DEBUG] Send purchase list');
-
                 socket.emit('purchaseList', purchases);
+            } else {
+                socket.emit('shiba');
             }
         })
         .catch(function(err) {
@@ -109,8 +110,10 @@ sellers.on('connection', function(socket) {
                 console.log(purchases);
 
                 // Send command to cookers
-                cookers.emit('newCommand', purchases);
-                // Seller page needs IDs of newly created purchases to display them (hidden field ID)
+                cookers.emit('newCommand', purchases);                
+            })
+            // Seller page needs IDs of newly created purchases to display them (hidden field ID)
+            .then(function(purchases) {
                 sellers.emit('getOrders', purchases);
             })
             .catch(function(err) {

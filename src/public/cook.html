@@ -55,7 +55,7 @@
                                 break;
                         }
 
-                        $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h1 class="title">' + purchase.name + '</h1><div class="group"><span class="timer">' + "Time" + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
+                        $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h1 class="title">' + purchase.name + '</h1><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
 
                         divPurchase = $('#' + purchase._id);
 
@@ -82,26 +82,42 @@
                                     purchase: purchase,
                                     state: updatePurchase
                                 });
+                                // console.log($('ul#commands').children());
+                                // if ($('ul#commands:not(:has(li))')) {
+                                //     console.log("LA CHOPPE");
+                                // }
                             });
                             
                         });
                     }); // end of foreach on orders
                 }
 
+                // Retrieve all existing, not finished purchases
                 socket.on('purchaseList', function(_purchaseList) {
                     // db.penguins.find().forEach(function (doc){ d = doc._id.getTimestamp(); print(d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()) })
+                    if ($('ul#commands:not(:has(li))')) {
+                        $('ul#commands').empty();
+                    }
 
                     console.log('[DEBUG] Received purchase list for cook:');
                     console.log(_purchaseList);
 
-                    purchaseList = _purchaseList.slice().reverse();
-                    fillOrders(purchaseList); 
+                    purchaseList = _purchaseList // .slice().reverse();
+                    fillOrders(purchaseList);
                 });
 
+                // Receive purchases
                 socket.on('newCommand', function(purchases) {
+                    if ($('ul#commands:not(:has(li))')) {
+                        $('ul#commands').empty();
+                    }
                     console.log('[DEBUG] Purchases received: ');
                     console.log(purchases);
                     fillOrders(purchases);
+                });
+
+                socket.on('shiba', function() {
+                    $('ul').append('<img src="img/shiba_eating_cake.jpg" alt="OUI">');
                 });
 
             });

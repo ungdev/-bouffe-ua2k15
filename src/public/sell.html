@@ -81,7 +81,7 @@
                             state="Terminé";
                             break;
                     }
-                    $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h2 class="title">' + purchase.name + '</h2><div class="group"><span class="timer">' + "Time" + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
+                    $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h2 class="title">' + purchase.name + '</h2><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
 
                     );
                 });
@@ -123,7 +123,7 @@
                 console.log('[DEBUG] Received purchase list for seller');
                 console.log(_purchaseList);
 
-                purchaseList = _purchaseList.slice().reverse();
+                purchaseList = _purchaseList // .slice().reverse();
                 fillOrders(purchaseList);
             });
 
