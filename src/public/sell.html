@@ -18,39 +18,19 @@
     <script src="/js/modernizr.custom.js"></script>
     <script src="/js/cbpFWTabs.js"></script>
     <script>
+        'use strict';
+
         $(function() {
 
             [].slice.call(document.querySelectorAll('.tabs')).forEach(function(e) {
                 new CBPFWTabs(e);
             });
 
-            function recalculate(send) {
-
-                var commands = [];
-
-                $.each($(".command > ul > li"), function() {
-                    var item = itemList[$(this).attr("id")];
-                    var mode = $('button.switch').attr('mode');
-                    var command = {
-                        _id: item._id,
-                        price: mode == 'normal' ? item.normalPrice : item.reducedPrice,
-                        name: item.name
-                    };
-                    commands.push(command);
-
-                    if (send)
-                        $("#commands").append('<li class="entry statusNone" id=' + itemList[$(this).attr("id")]._id + '><div class="main"><h1 class="title">' + itemList[$(this).attr("id")].name +
-                            '</h1><div class="group"><span class="timer">' + "Time" +
-                            '</span><span class="status">Non préparé</span></div></div><div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
-                        );
-                });
-                return commands;
-            }
-
             var socket   = io(window.location.origin + '/sellers');
             var itemList = [];
             var purchaseList = [];
             var item;
+            var orders = [];
 
             // Retrieve all items
             socket.on('itemList', function(_itemList) {
@@ -119,21 +99,41 @@
             });
 
             // Send orders to the backend.
-            $('#send').on('click', function() {
-                var commands = recalculate(true);
-                socket.emit('newCommand', commands);
-                console.log('[DEBUG] Command sent: ' + commands);
-                console.log(commands);
-                $(".command > ul").empty();
-                $(document).trigger('ordersChanged');
-            });
+
 
             // Refresh some UI parts when the orders list is updated.
             $(document).on('ordersChanged', function() {
+                orders = [];
+                $.each($(".command > ul > li"), function() {
+                    var item = itemList[$(this).attr("id")];
+                    var mode = $('button.switch').attr('mode');
+                    var command = {
+                        _id: item._id,
+                        price: (mode == 'normal') ? item.normalPrice : item.reducedPrice,
+                        name: item.name
+                    };
+                    orders.push(command);
+                });
                 // Recalculate total price.
-                $('#total-price').html(recalculate().reduce(function(a, b) {
+                $('#total-price').html(orders.reduce(function(a, b) {
                     return a + b.price;
                 }, 0) / 100);
+            });
+
+            $('#send').on('click', function() {
+                $(document).trigger('ordersChanged');
+                $('.command > ul > li').each(function() {
+                    var item = itemList[$(this).attr('id')];
+                    $('#commands').append('<li class="entry statusNone" id=' + item._id +
+                    '><div class="main"><h1 class="title">' + item.name +
+                    '</h1><div class="group"><span class="timer"></span><span class="status">Non préparé</span></div></div>'+
+                    '<div class="buttons"><button class="statusCook" disabled><img src="img/cook.png" alt="Cooking" height="30" width="30">'+
+                    '<span>Préparation</span></button><button class="statusReady" disabled><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone" disabled><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
+                });
+                socket.emit('newCommand', orders);
+                console.log('[DEBUG] Command sent: ' + orders);
+                console.log(orders);
+                $(".command > ul").empty();
             });
         });
     </script>
