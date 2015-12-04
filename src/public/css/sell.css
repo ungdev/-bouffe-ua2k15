@@ -74,25 +74,25 @@ section#tab {
 }
 
 .item {
-    height: 170px;
+    height: 150px;
     background: rgba(255, 255, 255, 0.4);
     box-sizing: border-box;
     float: left;
     font-weight: 700;
     margin: 10px;
     padding: 10px;
-    width: 190px;
+    width: 170px;
     position: relative;
 }
 
 .item > .name {
-    font-size: 21px;
+    font-size: 18px;
 }
 
 .item > .normalprice {
     position: absolute;
-    bottom: 38px;
-    font-size: 25px;
+    bottom: 33px;
+    font-size: 20px;
     margin: auto;
     margin-left: auto;
     margin-right: auto;
@@ -103,7 +103,7 @@ section#tab {
 .item > .reducedprice {
     position: absolute;
     bottom: 10px;
-    font-size: 25px;
+    font-size: 20px;
     margin-left: auto;
     margin-right: auto;
     left: 0;

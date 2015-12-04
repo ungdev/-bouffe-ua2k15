@@ -135,7 +135,7 @@
                                 state="Terminé";
                                 break;
                         }
-                        $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h2 class="title">' + purchase.name + '</h2><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
+                        $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h3 class="title">' + purchase.name + '</h3><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>'
 
                         );
                     }
@@ -162,7 +162,7 @@
                 $.each(itemList, function(index, value) {
                     item = '<div class="item" id=' + index + ' sendtocook="' + value.sendToCook + '"><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice/100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice/100).toFixed(2)  + ' €</div></div>';
 
-                    var tabs = ['drinks', 'bars', 'crepes', 'croques', 'sandwiches', 'pizzas', 'formules'];
+                    var tabs = ['drinks', 'bars', 'crepes', 'croques', 'sandwiches', 'pizzas', 'formules', 'goodies'];
                     $('#section-bar-' + ($.inArray(value.type, tabs) + 1)).append(item);
 
                     // omg ne regardez pas ça 
@@ -358,7 +358,11 @@
                             <span>Formules</span>
                         </a>
                     </li>
-
+                    <li>
+                        <a href="#section-bar-8">
+                            <span>Goodies</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <div class="content-wrap">
@@ -369,6 +373,7 @@
                 <section id="section-bar-5"></section>
                 <section id="section-bar-6"></section>
                 <section id="section-bar-7"></section>
+                <section id="section-bar-8"></section>
             </div>
         </div>
     </section>

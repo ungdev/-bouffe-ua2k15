@@ -77,22 +77,22 @@ var items = [
     {
         name: 'Café',
         type: 'drinks',
-        normalPrice: 050,
-        reducedPrice: 050,
+        normalPrice: 50,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
         name: 'Thé',
         type: 'drinks',
-        normalPrice: 050,
-        reducedPrice: 050,
+        normalPrice: 50,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
         name: 'Chocolat',
         type: 'drinks',
-        normalPrice: 050,
-        reducedPrice: 050,
+        normalPrice: 50,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
@@ -124,7 +124,7 @@ var items = [
         sendToCook: false
     },
     {
-        name: 'Lyon',
+        name: 'Lion',
         type: 'bars',
         normalPrice: 100,
         reducedPrice: 100,
@@ -154,15 +154,15 @@ var items = [
     {
         name: 'Crêpe sucre',
         type: 'crepes',
-        normalPrice: 050,
-        reducedPrice: 050,
+        normalPrice: 50,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
         name: 'Crêpe Nutella',
         type: 'crepes',
         normalPrice: 100,
-        reducedPrice: 050,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
@@ -176,18 +176,18 @@ var items = [
         name: 'Crêpe Caramel',
         type: 'crepes',
         normalPrice: 100,
-        reducedPrice: 050,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
         name: 'Croque Monsieur Crème Jambon Fromage',
         type: 'croques',
         normalPrice: 150,
-        reducedPrice: 050,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
-        name: 'Croque Monsieur Tomate Jambon cru Fromage',
+        name: 'Croque Monsieur Jambon cru Chèvre-Miel',
         type: 'croques',
         normalPrice: 200,
         reducedPrice: 100,
@@ -204,7 +204,7 @@ var items = [
         name: 'Croque Monsieur Nutella',
         type: 'croques',
         normalPrice: 100,
-        reducedPrice: 050,
+        reducedPrice: 50,
         sendToCook: true
     },
     {
@@ -346,7 +346,36 @@ var items = [
         normalPrice: 100,
         reducedPrice: 100,
         sendToCook: true
+    },
+    {
+        name: 'T-shirt joueur',
+        type: 'goodies',
+        normalPrice: 1000,
+        reducedPrice: 1000,
+        sendToCook: false
+    },
+    {
+        name: 'T-shirt staff',
+        type: 'goodies',
+        normalPrice: 500,
+        reducedPrice: 500,
+        sendToCook: false
+    },
+    {
+        name: 'Câble ethernet',
+        type: 'goodies',
+        normalPrice: 500,
+        reducedPrice: 500,
+        sendToCook: false
+    },
+    {
+        name: 'Multiprise',
+        type: 'goodies',
+        normalPrice: 500,
+        reducedPrice: 500,
+        sendToCook: false
     }
+    
 ];
 
 

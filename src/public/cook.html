@@ -16,12 +16,14 @@
                 var purchase;
                 var divPurchase;
                 var updatePurchase = "";
+                var addOneIsCalled = false;
 
                 function fillOrders(orders) {
                     orders.forEach(function(purchase) {
                         if (purchase.sendToCook == true) {
-
-                            // console.log(purchase.state);
+                            var now = Math.round(Date.now() / 1000);
+                            var createdAt = Math.round(new Date(purchase.created_at).getTime() / 1000);
+                            var time = (now - createdAt).toString();
 
                             var stateClass;
                             var state;
@@ -58,7 +60,7 @@
                                     break;
                             }
 
-                            $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h1 class="title">' + purchase.name + '</h1><div class="group"><span class="timer">' + " " + '</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
+                            $('#commands').prepend('<li class="entry ' + stateClass + '" id=' + purchase._id + '><div class="main"><h1 class="title">' + purchase.name + '</h1><div class="group"><span class="timer">' + time + 's</span><span class="status">' + state + '</span></div></div><div class="buttons"><button class="statusCook"' + disableCook +'><img src="img/cook.png" alt="Cooking" height="30" width="30"><span>Préparation</span></button><button class="statusReady"' + disableReady + '><img src="img/ready.png" alt="Ready" height="30" width="30"><span>Prêt</span></button><button class="statusDone"' + disableDone + '><img src="img/done.png" alt="Servi" height="30" width="30"><span>Envoyé</span></button></div></li>');
 
                             divPurchase = $('#' + purchase._id);
 
@@ -101,6 +103,11 @@
                                 });
                                 
                             });
+                            
+                            if (!addOneIsCalled) {
+                                addOneIsCalled = true;
+                                addOne();
+                            }
                         }
                     }); // end of foreach on orders
                 }
@@ -127,13 +134,19 @@
                     // console.log('[DEBUG] Purchases received: ');
                     // console.log(purchases);
                     fillOrders(purchases);
-                    fn(true);
                 });
 
                 socket.on('shiba', function() {
                     $('ul').append('<img src="img/shiba_eating_cake.jpg" class="shiba" alt="OUI">');
                 });
 
+                function addOne() {
+                    $('.timer').each(function () {
+                        var i = parseInt($(this).text(), 10) + 1;
+                        $(this).text(i + 's');
+                    })
+                    setTimeout(addOne, 1000);
+                }
             });
         </script>
     </head>
