@@ -9,15 +9,19 @@ html, body {
     width: calc(18% - 1px);
     height: 100%;
     float: left;
-}
-
-.command > h1, .command > h3 {
-    padding: 0 0 0 20px;
+    text-align: center;
 }
 
 .command > ul {
-    padding: 0 0 0 20px;
+    font-size: 20px;
 }
+
+.remove-item {
+    color: red;
+    float: right;
+    padding-right: 5%;
+}
+
 
 /* Show list on the right */
 
