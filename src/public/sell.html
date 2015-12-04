@@ -61,7 +61,7 @@
                 $.each($(".content-wrap > section"), function() {
                     $(this).empty();
                 });
-                $('#section-bar-4').append('<div id="croques"></div><div id="sandwiches"></div>');
+                // $('#section-bar-4').append('<div id="croques"></div><div id="sandwiches"></div>');
 
                 console.log('[DEBUG] Received item list');
                 console.log(_itemList);
@@ -69,27 +69,31 @@
 
                 $.each(itemList, function(index, value) {
                     item = '<div class="item" id=' + index + '><div class="name">' + value.name + '</div><div class="normalprice">' + (value.normalPrice/100).toFixed(2) + ' €</div><div class="reducedprice">' + (value.reducedPrice/100).toFixed(2)  + ' €</div></div>';
-                    if (value.type == "drinks") {
-                        $('#section-bar-1').append(item);
-                    }
-                    else if (value.type == "bars") {
-                        $('#section-bar-2').append(item);
-                    }
-                    else if (value.type == "crepes") {
-                        $('#section-bar-3').append(item);
-                    }
-                    else if (value.type == "croques") {
-                        $('#section-bar-4 > #croques').append(item);
-                    }
-                    else if (value.type == "sandwiches") {
-                        $('#section-bar-4 > #sandwiches').append(item);
-                    }
-                    else if (value.type == "pizzas") {
-                        $('#section-bar-5').append(item);
-                    }
-                    else if (value.type == "formules") {
-                        $('#section-bar-6').append(item);
-                    }
+
+                    var tabs = ['drinks', 'bars', 'crepes', 'croques', 'sandwiches', 'pizzas', 'formules'];
+                    $('#section-bar-' + ($.inArray(value.type, tabs) + 1)).append(item);
+
+                    // if (value.type == "drinks") {
+                    //     $('#section-bar-1').append(item);
+                    // }
+                    // else if (value.type == "bars") {
+                    //     $('#section-bar-2').append(item);
+                    // }
+                    // else if (value.type == "crepes") {
+                    //     $('#section-bar-3').append(item);
+                    // }
+                    // else if (value.type == "croques") {
+                    //     $('#section-bar-4 > #croques').append(item);
+                    // }
+                    // else if (value.type == "sandwiches") {
+                    //     $('#section-bar-4 > #sandwiches').append(item);
+                    // }
+                    // else if (value.type == "pizzas") {
+                    //     $('#section-bar-5').append(item);
+                    // }
+                    // else if (value.type == "formules") {
+                    //     $('#section-bar-6').append(item);
+                    // }
                 });
             });
 
@@ -205,16 +209,21 @@
                     </li>
                     <li>
                         <a href="#section-bar-4">
-                            <span>Croques et sandwichs</span>
+                            <span>Croques</span>
                         </a>
                     </li>
                     <li>
                         <a href="#section-bar-5">
-                            <span>Pizzas</span>
+                            <span>Sandwichs</span>
                         </a>
                     </li>
                     <li>
                         <a href="#section-bar-6">
+                            <span>Pizzas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#section-bar-7">
                             <span>Formules</span>
                         </a>
                     </li>
@@ -225,12 +234,10 @@
                 <section id="section-bar-1"></section>
                 <section id="section-bar-2"></section>
                 <section id="section-bar-3"></section>
-                <section id="section-bar-4">
-                    <div id="croques"></div>
-                    <div id="sandwiches"></div>
-                </section>
+                <section id="section-bar-4"></section>
                 <section id="section-bar-5"></section>
                 <section id="section-bar-6"></section>
+                <section id="section-bar-7"></section>
             </div>
         </div>
     </section>
